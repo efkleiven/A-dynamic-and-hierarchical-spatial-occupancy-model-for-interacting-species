@@ -1,0 +1,1 @@
+# A-dynamic-and-hierarchical-spatial-occupancy-model-for-interacting-species
