@@ -8,8 +8,8 @@
 ## We have added a spatial hierarchy with blocks with multiple sites within each block                                                ##
 ##                                                                               ##                                                                                               
 ##                                                                                                                                    ##
-##  In this script we analyse observed data from Komag on the Varanger penninsula                                                     ##                                                                           
-##  last updated 13.3.20 by EFK                                                                                                                                  ##    
+##  In this script we analyse data from Komag and Vestre jacobselv on the Varanger penninsula                                                     ##                                                                           
+##                                                                                                                                  ##    
 ########################################################################################################################################
 
 # Call jags(and other packages)
@@ -225,7 +225,6 @@ dim(yb) # check that dimentions are ok
 #yb <- yb[,,155:202,] #
 
 #load cov
-# data simulated under this model
 load("season.rda") 
 season <- season[1:203]
 
@@ -233,12 +232,13 @@ season <- season[1:203]
 data <-list(nseason = dim(yb)[3], nblock = dim(yb)[2], nsite = dim(yb)[1], nsurvey = dim(yb)[4], 
             nout=4, y = yb, season = season)
 
+# name some parameters for loopes further down
 nseason = dim(yb)[3]; nblock = dim(yb)[2]; nsite = dim(yb)[1]; nsurvey = dim(yb)[4]
 
-# Initial values 
+# Initial values for state
 sp_inits <- apply(yb,c(1,2,3),max)
 
-# loop to make cases where both state 2 and 3 is observed within the same sampling occation have initial value 4
+# loop to make cases where both state 2 and 3 is observed within the same primary occation have initial value 4
 dataL <- array(0,dim=c(nsite,nblock,nseason))
 for(j in 1:nsite){
   for(b in 1:nblock){
