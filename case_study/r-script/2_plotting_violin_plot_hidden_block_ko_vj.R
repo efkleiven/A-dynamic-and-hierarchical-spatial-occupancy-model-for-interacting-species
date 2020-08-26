@@ -118,6 +118,7 @@ pos5 <-c("psi1","psi2","psi3")  # spesify what order to plot the simulations
 
 ggplot(data=dat5, aes(x=par, y=sims, fill="grey"))+
   geom_violin(fill="grey")+
+  geom_boxplot(data=dat5, width=0.4, color="black", alpha=0.4, fill="white")+
   geom_point(data=dat6, color="red", shape="-", size=15)+
   labs(y="", x="")+
   facet_wrap(~block, labeller = label_parsed, ncol=4)+
