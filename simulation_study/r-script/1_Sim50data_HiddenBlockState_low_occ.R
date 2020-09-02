@@ -1,34 +1,28 @@
-#####################################################################################################################
-## In this script we Simulate data under a hidden block state model  #
-## by efk last updated 6.3.2020
-## 
-## 
-## We use a simple detection model where detection of the two species are uncondiditonal on the precene of 
-## the other species. We also assume that the first seson block state is simply a function of site states. 
-## We assume coloniztion to be a process that can happen both at site and block level, however for a site to be 
-## colonized the block has to be colonized first. 
-## 
-## We simulated 50 datasets with the same true parameter values
-## In this script we simulate data from the mid occ parameter values
-#######################################################################################################################
-
+####################################################################################
+## Simulation study                                                               ##
+## A dynamic and hiearchical spatial occupancy model for interacting species      ##
+## In this script we simulate data under the low occupancy scenario               ##
+##                                                                                ##
+## by Eivind Flittie Kleiven and Frederic Barraquand                              ##
+##                                                                                ##  
+####################################################################################
 # load libraries
 library(extraDistr)
 library("abind")
 
-M <- 12  # Number of sites
-B <- 4   # Number of blocks
-J <- 7   # num secondary sample periods
-T <- 50 # num primary sample periods
+M <- 12    # Number of sites
+B <- 4     # Number of blocks
+J <- 7     # num secondary sample periods
+T <- 50    # num primary sample periods
 ndat <- 50 # num simulated data sets
 
 btpm <- array(NA, dim=c(4,4)) # block transition probability matrix
 stpm <- array(NA, dim=c(ndat, B,T,4,4)) # transition probability matrix
 rdm <- array(NA, dim=c(4,4))  # detection probability matrix
 
-psi <- array(NA,dim =c(4,T))  # Initial site occupancy probability
-z_low_occ <- array(dim = c(ndat, M, B, T)) # Expected and realized occurrence
-x_low_occ <- array(dim = c(ndat, B, T))
+psi <- array(NA,dim =c(4,T))  # site occupancy probability
+z_low_occ <- array(dim = c(ndat, M, B, T)) # latent site state
+x_low_occ <- array(dim = c(ndat, B, T))    # latent block state
 
 y_low_occ<- array(NA, dim = c(ndat, M, B, J, T)) # Detection histories
 
@@ -41,6 +35,7 @@ pB <- 0.5
 ########################
 # site level paramters
 ########################
+
 # colonization probability
 gamA <- 0.3 
 gamB <- 0.3
@@ -60,6 +55,7 @@ epsBA <- 0.1
 ########################
 # block level paramters
 ########################
+
 # colonization probability
 GamA <- 0.1 
 GamB <- 0.05
@@ -89,7 +85,7 @@ x_low_occ[d,b,1] <- ifelse(sum(z_low_occ[d,,b,1]==1) == M, 1,
 
 ######
 # Latent state for dynamic part of model
-# tpm = transition probability matrix. All columns sum to 1.
+# btpm = block transition probability matrix. All columns sum to 1.
 ######
 
 # U to ...
@@ -112,7 +108,7 @@ btpm[4, 3] <- GamAB * (1-EpsB)       #--|AB
 
 # AB to ..
 btpm[1, 4] <- EpsAB * EpsBA          #--|U
-btpm[2, 4] <- (1-EpsAB) * EpsBA     #--|A
+btpm[2, 4] <- (1-EpsAB) * EpsBA      #--|A
 btpm[3, 4] <- EpsAB * (1-EpsBA)      #--|B
 btpm[4, 4] <- (1-EpsAB) * (1-EpsBA)  #--|AB
 
@@ -130,16 +126,16 @@ x_low_occ[d,b,t+1] <- rcat(1, btpm[ ,x_low_occ[d,b,t]])
 ######################################################################
 
   # U to ...
-  stpm[d, , t, 1, 1] <- (1-gamA*((x_low_occ[d, b, t+1] == 2)+(x_low_occ[d, b, t+1] == 4))) * (1-gamB*((x_low_occ[d, b, t+1] == 3)+(x_low_occ[d, b, t+1] == 4)))    #--|U
-  stpm[d, b, t, 2, 1] <- gamA *((x_low_occ[d, b, t+1] == 2)+(x_low_occ[d, b, t+1] == 4)) * (1-gamB*((x_low_occ[d, b, t+1] == 3)+(x_low_occ[d, b, t+1] == 4)))      #--|A
-  stpm[d, b, t, 3, 1] <- (1-gamA*((x_low_occ[d, b, t+1] == 2)+(x_low_occ[d, b, t+1] == 4)) ) * gamB *((x_low_occ[d, b, t+1] == 3)+(x_low_occ[d, b, t+1] == 4))     #--|B
-  stpm[d, b, t, 4, 1] <- gamA * gamB *(x_low_occ[d, b, t+1] == 4)                                                          #--|AB
+  stpm[d, , t, 1, 1] <- (1-gamA*((x_low_occ[d, b, t+1] == 2)+(x_low_occ[d, b, t+1] == 4))) * (1-gamB*((x_low_occ[d, b, t+1] == 3)+(x_low_occ[d, b, t+1] == 4)))  #--|U
+  stpm[d, b, t, 2, 1] <- gamA *((x_low_occ[d, b, t+1] == 2)+(x_low_occ[d, b, t+1] == 4)) * (1-gamB*((x_low_occ[d, b, t+1] == 3)+(x_low_occ[d, b, t+1] == 4)))    #--|A
+  stpm[d, b, t, 3, 1] <- (1-gamA*((x_low_occ[d, b, t+1] == 2)+(x_low_occ[d, b, t+1] == 4)) ) * gamB *((x_low_occ[d, b, t+1] == 3)+(x_low_occ[d, b, t+1] == 4))   #--|B
+  stpm[d, b, t, 4, 1] <- gamA * gamB *(x_low_occ[d, b, t+1] == 4)                                                                                                #--|AB
                        
                        
    # A to ...
   stpm[d, b, t, 1, 2] <- epsA * (1-gamBA*((x_low_occ[d, b, t+1] == 3)+(x_low_occ[d, b, t+1] == 4)))       #--|U
   stpm[d, b, t, 2, 2] <- (1-epsA) * (1-gamBA*((x_low_occ[d, b, t+1] == 3)+(x_low_occ[d, b, t+1] == 4)))   #--|A
-  stpm[d, b, t, 3, 2] <- epsA * gamBA *((x_low_occ[d, b, t+1] == 3)+(x_low_occ[d, b, t+1] == 4))           #--|B
+  stpm[d, b, t, 3, 2] <- epsA * gamBA *((x_low_occ[d, b, t+1] == 3)+(x_low_occ[d, b, t+1] == 4))          #--|B
   stpm[d, b, t, 4, 2] <- (1-epsA) * gamBA  *((x_low_occ[d, b, t+1] == 3)+(x_low_occ[d, b, t+1] == 4))     #--|AB
                        
   # B to ...
@@ -170,28 +166,28 @@ for(i in 1:M){ # Loop over sites
 # OS along rows, TS along columns
 ######
 # TS = U
-rdm[1, 1] <- 1 #----------------------------------------------------|OS = U
-rdm[2, 1] <- 0 #----------------------------------------------------|OS = A
-rdm[3, 1] <- 0 #----------------------------------------------------|OS = B
-rdm[4, 1] <- 0 #----------------------------------------------------|OS = AB
+rdm[1, 1] <- 1    #-------------|OS = U
+rdm[2, 1] <- 0    #-------------|OS = A
+rdm[3, 1] <- 0    #-------------|OS = B
+rdm[4, 1] <- 0    #-------------|OS = AB
 
 # TS = A
-rdm[1, 2] <- 1-pA #----------------------------------------------------|OS = U
-rdm[2, 2] <- pA #-------------------------------------|OS = A
-rdm[3, 2] <- 0 #----------------------------------------------------|OS = B
-rdm[4, 2] <- 0 #----------------------------------------------------|OS = AB
+rdm[1, 2] <- 1-pA #-------------|OS = U
+rdm[2, 2] <- pA   #-------------|OS = A
+rdm[3, 2] <- 0    #-------------|OS = B
+rdm[4, 2] <- 0    #-------------|OS = AB
 
 # TS = B
-rdm[1, 3] <- 1-pB #----------------------------------------------------|OS = U
-rdm[2, 3] <- 0 #----------------------------------------------------|OS = A
-rdm[3, 3] <- pB #-------------------------------------|OS = B
-rdm[4, 3] <- 0 #----------------------------------------------------|OS = AB
+rdm[1, 3] <- 1-pB #-------------|OS = U
+rdm[2, 3] <- 0    #-------------|OS = A
+rdm[3, 3] <- pB   #-------------|OS = B
+rdm[4, 3] <- 0    #-------------|OS = AB
 
 # TS = AB
-rdm[1, 4] <- (1-pA) * (1-pB) #----------------------------------------------------|OS = U
-rdm[2, 4] <- pA * (1-pB)      #-----------------|OS = A
-rdm[3, 4] <- (1-pA) * pB                      #-----------------|OS = B
-rdm[4, 4] <- pA * pB       #-----------------|OS = AB
+rdm[1, 4] <- (1-pA) * (1-pB)  #-|OS = U
+rdm[2, 4] <- pA * (1-pB)      #-|OS = A
+rdm[3, 4] <- (1-pA) * pB      #-|OS = B
+rdm[4, 4] <- pA * pB          #-|OS = AB
 
 for(d in 1:ndat){
   for(b in 1:B){
@@ -210,15 +206,10 @@ save(y_low_occ, file="simdata_50set_50seas_y_low_occ.rda")
 save(z_low_occ, file="simdata_50set_50seas_z_low_occ.rda")
 save(x_low_occ, file="simdata_50set_50seas_x_low_occ.rda")
 
-table(y_low_occ)
-table(z_low_occ)
-table(x_low_occ) # x now has only observered states because predator and prey are very common
-
-
 ###############################
 ## plotting
 
-# do it on site level
+# remove block structure to make plot on site level
 z <- abind(z_low_occ[1,,1,],z_low_occ[1,,2,],z_low_occ[1,,3,],z_low_occ[1,,4,],along=1)
 
 ## reduce to N or not N
@@ -227,6 +218,7 @@ for(t in 1:50){
     for(i in 1:48){
       N[i,t] <- ifelse(is.element(2, z[i,t])==TRUE | is.element(4, z[i,t])==TRUE, 1,0) 
     }}
+
 ## reduce to P or not P
 P <- array(NA, dim=c(48,50))
 for(t in 1:50){
@@ -247,7 +239,8 @@ legend("topright", legend=c("Prey", "Predator"), lty=1,col=c("blue","red"))
 dev.off()
 
 # plot trend in detections
-# do it on site level
+
+# remove block structure to make plot on site level
 y <- abind(y[,1,,],y[,2,,],y[,3,,],y[,4,,],along=1)
 
 ## reduce to N or not N

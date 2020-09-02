@@ -1,25 +1,17 @@
-########################################################################################################################################
-##          Spatial Dynamic two-species occupancy model for analyzing data from a summerseason in Komag                               ##
-##                                  by EFK and FB                                                                                     ##
-##                                                                                                                                    ##
-## The transition probability matrix is a slightly simplifies version of what is presenter in MacKenzie et al. 2017.                  ##
-## Initial values for latent state are esitmated as the highest observed stated                                                       ##
-## The detection model is a two parameters where we assume indendence between detections of the two species probabilities             ##
-## We have added a spatial hierarchy with blocks with multiple sites within each block                                                ##
-## Detection is models with a binary season co-variate                                                                                ##                                                                                               
-##                                                                                                                                    ##
-##  In this script we analyse 50 sets of simulated simulated data (mid_det)                                                     ##                                                                           
-##  last updated 25.3.20 by EFK                                                                                                                                  ##    
-########################################################################################################################################
+#####################################################################################################################
+##          Spatial Dynamic two-species occupancy model analyzing simulated data under a mid detection scenario    ##
+##                                  by Eivind Flittie Kleiven and Frederic Barraquand                              ##
+#####################################################################################################################
 
-# Call jags(and other packages)
+# clear work space
 rm(list=ls())
 
+# Call jags(and other packages)
 library(jagsUI)
+
 
 # set working directory
 setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel")
-
 setwd("./models/hidden_block_sim")
 
 #
@@ -27,9 +19,7 @@ setwd("./models/hidden_block_sim")
 sink("mac_dmsom_sdet.txt")
 cat("
     model{
-    
-    ###########################################
-    ### Spatial Dynamic Co-Occurrence Model ###
+
     ###########################################
     # State 1= Unoccupied(U), State 2= vole(A), State 3 = stoat(B), State 4 = vole & stoat(AB)  
     ########################################### 
@@ -69,7 +59,6 @@ cat("
     }
   
     # First season probabilities for each state
-
     #site    
     for(j in 1:nsite){
     fsm[j, b, 1] <- 1-psi[b,1]-psi[b,2]-psi[b,3]  #-----------|U
@@ -98,9 +87,6 @@ cat("
     
     ##########################################
     # btpm = block transition probability matrix. All columns sum to 1.
-    # dim(btpm)[1] = block b 
-    # dim(btpm)[2] = state at time t
-    # dim(btpm)[3] = state at time t-1
     #############################################
     
     # U to ...
@@ -134,9 +120,6 @@ cat("
       
     ######################################################################
     ## stpm = site transition probability matrix. All columns sum to 1. ##
-    ## dim(tpm)[1] = site j                                             ##
-    ## dim(tpm)[2] = state at time t                                    ##
-    ## dim(tpm)[3] = state at time t-1                                  ##
     ######################################################################
     
     # U to ...
@@ -173,11 +156,11 @@ cat("
         } # end site loop
       } # end block loop
     } # end time loop
+    
     #############################################################
     ## detection matrix (OS = observed state, TS = true state) ##
     #############################################################
-    
-
+   
     # TS = U
     dpm[ 1, 1] <- 1                #--|OS = U
     dpm[ 2, 1] <- 0                #--|OS = A
@@ -224,8 +207,9 @@ params <- c("gamA","gamB","gamAB","gamBA","epsA","epsB","epsAB","epsBA","psi",
 # MCMC settings
 ni <- 5000  ;   nt <- 10   ;   nb <- 0   ;   nc <- 4    ;   na <- 1000
 
-##############################################
-# make loop over 50 data sets
+###########################
+# loop over 50 data sets  #
+
 for(q in 1:50){
 yb <- y_mid_det[q, , , , ] #
 yb <- aperm(yb, c(1,2,4,3))
@@ -270,7 +254,6 @@ for(j in 1:nsite){
 mod_hidden_sim_mid_det[[q]] <- jags(data, inits=inits, params, "mac_dmsom_sdet.txt", n.chains = nc,
             n.thin = nt, n.iter = ni, n.burnin = nb, n.adapt=na, parallel = T)
 }
-# previous model took 16.67 min
 
 # Save model
 setwd("./model_output")

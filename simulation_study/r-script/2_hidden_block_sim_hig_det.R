@@ -1,35 +1,24 @@
-########################################################################################################################################
-##          Spatial Dynamic two-species occupancy model for analyzing data from a summerseason in Komag                               ##
-##                                  by EFK and FB                                                                                     ##
-##                                                                                                                                    ##
-## The transition probability matrix is a slightly simplifies version of what is presenter in MacKenzie et al. 2017.                  ##
-## Initial values for latent state are esitmated as the highest observed stated                                                       ##
-## The detection model is a two parameters where we assume indendence between detections of the two species probabilities             ##
-## We have added a spatial hierarchy with blocks with multiple sites within each block                                                ##
-## Detection is models with a binary season co-variate                                                                                ##                                                                                               
-##                                                                                                                                    ##
-##  In this script we analyse 50 sets of simulated simulated data (hig_det)                                                     ##                                                                           
-##  last updated 16.4.20 by EFK                                                                                                                                  ##    
-########################################################################################################################################
+#####################################################################################################################
+##          Spatial Dynamic two-species occupancy model analyzing simulated data under a high detection scenario   ##
+##                                  by Eivind Flittie Kleiven and Frederic Barraquand                              ##
+#####################################################################################################################
 
-# Call jags(and other packages)
+# clear work space
 rm(list=ls())
 
+# Call jags(and other packages)
 library(jagsUI)
 
 # set working directory
 setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel")
-
 setwd("./models/hidden_block_sim")
 
 #
-# Specify model in BUGS language
+# Specify model in JAGS language
 sink("mac_dmsom_sdet.txt")
 cat("
     model{
     
-    ###########################################
-    ### Spatial Dynamic Co-Occurrence Model ###
     ###########################################
     # State 1= Unoccupied(U), State 2= vole(A), State 3 = stoat(B), State 4 = vole & stoat(AB)  
     ########################################### 
@@ -98,9 +87,6 @@ cat("
     
     ##########################################
     # btpm = block transition probability matrix. All columns sum to 1.
-    # dim(btpm)[1] = block b 
-    # dim(btpm)[2] = state at time t
-    # dim(btpm)[3] = state at time t-1
     #############################################
     
     # U to ...
@@ -134,9 +120,6 @@ cat("
       
     ######################################################################
     ## stpm = site transition probability matrix. All columns sum to 1. ##
-    ## dim(tpm)[1] = site j                                             ##
-    ## dim(tpm)[2] = state at time t                                    ##
-    ## dim(tpm)[3] = state at time t-1                                  ##
     ######################################################################
     
     # U to ...
@@ -264,13 +247,11 @@ for(j in 1:nsite){
         sp_inits[j,b,i] <- 4}
     }}}
 
-
 # run model in jags
 
 mod_hidden_sim_hig_det[[q]] <- jags(data, inits=inits, params, "mac_dmsom_sdet.txt", n.chains = nc,
             n.thin = nt, n.iter = ni, n.burnin = nb, n.adapt=na, parallel = T)
 }
-# previous model took 16.67 min
 
 # Save model
 setwd("./model_output")

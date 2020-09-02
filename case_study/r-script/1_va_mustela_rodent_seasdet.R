@@ -1,16 +1,7 @@
-########################################################################################################################################
-##          Spatial Dynamic two-species occupancy model for analyzing data from a summerseason in Komag                               ##
-##                                  by EFK and FB                                                                                     ##
-##                                                                                                                                    ##
-## The transition probability matrix is a slightly simplifies version of what is presenter in MacKenzie et al. 2017.                  ##
-## Initial values for latent state are esitmated as the highest observed stated                                                       ##
-## The detection model is a two parameters where we assume indendence between detections of the two species probabilities             ##
-## We have added a spatial hierarchy with blocks with multiple sites within each block                                                ##
-##                                                                               ##                                                                                               
-##                                                                                                                                    ##
-##  In this script we analyse data from Komag and Vestre jacobselv on the Varanger penninsula                                                     ##                                                                           
-##                                                                                                                                  ##    
-########################################################################################################################################
+################################################################################################################################################
+##          Spatial Dynamic two-species occupancy model analyzing data a long-term monitoring program of small mammals on the arctic tundra   ##
+##                                  by Eivind Flittie Kleiven and Frederic Barraquand                                                         ##
+################################################################################################################################################
 
 # Call jags(and other packages)
 rm(list=ls())
@@ -19,11 +10,10 @@ library(jagsUI)
 
 # set working directory
 setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel")
-
 setwd("./models/hidden_block_ko_fromautoclass/ko_vj")
 
 #
-# Specify model in BUGS language
+# Specify model in JAGS language
 sink("hidden_block_seas_det.txt")
 cat("
     model{
@@ -97,13 +87,10 @@ cat("
     
     } # end block loop
 
-    #############################################
-    # block level transition probability matrix #
-    #############################################  
-    
-    ##########################################
-    # btpm = block transition probability matrix. All columns sum to 1.
-    #############################################
+    ###############################################
+    # btpm = block transition probability matrix. #
+    # All columns sum to 1.                       #
+    ###############################################
     
     # U to ...
     btpm[ 1, 1] <- (1-GamA) * (1-GamB)    #--|U
@@ -134,15 +121,16 @@ cat("
       for(b in 1:nblock){
         x[b, t+1] ~ dcat(btpm[(1:nout), x[b, t]])
       
-    ######################################################################
-    ## stpm = site transition probability matrix. All columns sum to 1. ##
-    ######################################################################
+    ####################################################
+    ## stpm = site transition probability matrix.     ##
+    ## All columns sum to 1.                          ##
+    ####################################################
     
     # U to ...
     stpm[b, t, 1, 1] <- (1-gamA*((x[b, t+1] == 2)+(x[b, t+1] == 4))) * (1-gamB*((x[b, t+1] == 3)+(x[b, t+1] == 4)))    #--|U
     stpm[b, t, 2, 1] <- gamA *((x[b, t+1] == 2)+(x[b, t+1] == 4)) * (1-gamB*((x[b, t+1] == 3)+(x[b, t+1] == 4)))       #--|A
     stpm[b, t, 3, 1] <- (1-gamA*((x[b, t+1] == 2)+(x[b, t+1] == 4))) * gamB *((x[b, t+1] == 3)+(x[b, t+1] == 4))       #--|B
-    stpm[b, t, 4, 1] <- gamA * gamB *(x[b, t+1] == 4)        #--|AB
+    stpm[b, t, 4, 1] <- gamA * gamB *(x[b, t+1] == 4)                                                                  #--|AB
     
     # A to ...
     stpm[b, t, 1, 2] <- epsA * (1-gamBA*((x[b, t+1] == 3)+(x[b, t+1] == 4)))       #--|U
@@ -213,16 +201,13 @@ cat("
 sink()
 
 ## import data
-setwd("./data")
+setwd("./data") # set wd to where the data is stored
 
-load( "occm_mustela_rodent_var_snowbed.rda")    
+load("occm_mustela_rodent_var_snowbed.rda")    
 
 yb <-occm_ko3 # change name to fit with rest of the code
 
 dim(yb) # check that dimentions are ok
-
-# reduce to 50 seasons without to strong signals of seasonality and and cyclisity 
-#yb <- yb[,,155:202,] #
 
 #load cov
 load("season.rda") 
@@ -232,13 +217,13 @@ season <- season[1:203]
 data <-list(nseason = dim(yb)[3], nblock = dim(yb)[2], nsite = dim(yb)[1], nsurvey = dim(yb)[4], 
             nout=4, y = yb, season = season)
 
-# name some parameters for loopes further down
+# naming some parameters for loopes further down in this script
 nseason = dim(yb)[3]; nblock = dim(yb)[2]; nsite = dim(yb)[1]; nsurvey = dim(yb)[4]
 
 # Initial values for state
 sp_inits <- apply(yb,c(1,2,3),max)
 
-# loop to make cases where both state 2 and 3 is observed within the same primary occation have initial value 4
+# loop to make cases where both state 2 and 3 is observed within the same primary occasion have initial value 4
 dataL <- array(0,dim=c(nsite,nblock,nseason))
 for(j in 1:nsite){
   for(b in 1:nblock){

@@ -32,6 +32,7 @@ dir()
 
 ##############################################################################
 
+ # creat df in the right format for ggplot
 dat <- data.frame(sims=unlist(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list[c(1:8,10:17)]),
                   par=c(rep("gamA", times=40000),rep("gamB", times=40000),rep("gamAB", times=40000),rep("gamBA", times=40000),
                         rep("epsA", times=40000),rep("epsB", times=40000),rep("epsAB", times=40000),rep("epsBA", times=40000),
@@ -49,6 +50,8 @@ pos <-c("gamA", "gamB", "gamAB", "gamBA",
         "GamA", "GamB", "GamAB", "GamBA",
         "EpsA", "EpsB", "EpsAB", "EpsBA")  # spesify what order to plot the simulations
 
+
+# plot colonization and exrinction probabilities
 ggplot(data=dat, aes(x=par, y=sims, fill="grey"))+
   geom_violin(fill="grey")+
   geom_point(data=dat2, color="red", shape="-", size=20)+
@@ -64,15 +67,14 @@ ggplot(data=dat, aes(x=par, y=sims, fill="grey"))+
                             'EpsA' = parse(text = TeX("$E_{A}$")), 'EpsB' = parse(text = TeX("$E_{B}$")), 
                             'EpsAB' = parse(text = TeX("$E_{AB}$")), 'EpsBA' = parse(text = TeX("$E_{BA}$")) ))
 
-# you should add posterior mean/median to the figure as well
-
+# save plot
 setwd("../plot")
 ggsave("modperf_va_snowbed_mustela_rodent_sdet_s1_203_site&block.png", width = 60, height = 20, units="cm")
 
-###########################################################################
+
 ## plot estimated detection probabilities
 
-
+# making df in the right format for ggplot
 dat3 <- data.frame(sims=c(unlist(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list[18][[1]][,c(1,15)]),
                           unlist(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list[19][[1]][,c(1,15)])),
            par=c(rep("pA_S", times=40000), rep("pA_W", times=40000), rep("pB_S", times=40000), rep("pB_W", times=40000)) )
@@ -81,9 +83,10 @@ dat4 <- data.frame(sims=c(unlist(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$me
                           unlist(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean[19][[1]][c(1,15)])),
                    par=c("pA_S", "pA_W", "pB_S", "pB_W"))
 
-
+# specifing what order the parameters should be plotted
 pos3 <-c("pA_S", "pA_W", "pB_S", "pB_W")  # spesify what order to plot the simulations
 
+#make plot
 ggplot(data=dat3, aes(x=par, y=sims, fill="grey"))+
   geom_violin(fill="grey")+
   geom_point(data=dat4, color="red", shape="-", size=15)+
@@ -93,13 +96,14 @@ ggplot(data=dat3, aes(x=par, y=sims, fill="grey"))+
   scale_x_discrete(limits=pos3, labels=c('pA_S' = parse(text = TeX("$p_{A_S}$")), 'pA_W' = parse(text = TeX("$p_{A_W}$")), 
                                         'pB_S' = parse(text = TeX("$p_{B_S}$")), 'pB_W' = parse(text = TeX("$p_{B_W}$"))))
 
-
+# save plot
 ggsave("modperf_va_snowbed_mustela_rodent_sdet_s1_203_p.png", width = 60, height = 20, units="cm")
 
 
-###########################################################################
+
 ## plot estimated initial occupancy probability
 
+# make df with the structure correct structure for ggplot
 dat5 <- data.frame(sims=c(as.vector(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list$psi[,,1]),
                           as.vector(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list$psi[,,2]),
                           as.vector(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list$psi[,,3])),
@@ -116,6 +120,7 @@ dat6 <- data.frame(sims=c(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$psi[
 
 pos5 <-c("psi1","psi2","psi3")  # spesify what order to plot the simulations
 
+# make plot
 ggplot(data=dat5, aes(x=par, y=sims, fill="grey"))+
   geom_violin(fill="grey")+
   geom_boxplot(data=dat5, width=0.4, color="black", alpha=0.4, fill="white")+
@@ -128,5 +133,6 @@ ggplot(data=dat5, aes(x=par, y=sims, fill="grey"))+
                    labels=c('psi1' = parse(text = TeX("$\\psi_{1}$")), 'psi2' = parse(text = TeX("$\\psi_{2}$")), 'psi3' = parse(text = TeX("$\\psi_{3}$"))))
 
 
+# save the model
 ggsave("modperf_va_snowbed_mustela_rodent_sdet_s1_203_psi_2.png", width = 60, height = 30, units="cm")
 
