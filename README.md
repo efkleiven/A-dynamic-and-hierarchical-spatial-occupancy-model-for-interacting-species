@@ -1,2 +1,3 @@
 # A-dynamic-and-hierarchical-spatial-occupancy-model-for-interacting-species
-In this repository you will find code to conduct a simulation study to validate the performance of a dynamical and hierachical spatial occypancy model for interacting species. 
+
+In this repository you will find code and data to run a dynamic and hierarchical spatial occupancy model for interaction species. In the folder simulation_study there is code and data to conduct a simulation study to investigate bias in any of the estimated parameters under different data senarios. In the folder case_study there is real world data from an longterm monitoring program, COAT(www.coat.no), of small mammals on the arctic tundra. As well there is code to analyse this data with the dynamic and hierarchical spatial occupancy model for interacting species.  
