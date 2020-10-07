@@ -51,7 +51,7 @@ pos <-c("gamA", "gamB", "gamAB", "gamBA",
         "EpsA", "EpsB", "EpsAB", "EpsBA")  # spesify what order to plot the simulations
 
 
-# plot colonization and exrinction probabilities
+# plot colonization and extinction probabilities
 ggplot(data=dat, aes(x=par, y=sims, fill="grey"))+
   geom_violin(fill="grey")+
   geom_point(data=dat2, color="red", shape="-", size=20)+
@@ -88,11 +88,11 @@ pos3 <-c("pA_S", "pA_W", "pB_S", "pB_W")  # spesify what order to plot the simul
 
 #make plot
 ggplot(data=dat3, aes(x=par, y=sims, fill="grey"))+
-  geom_violin(fill="grey")+
-  geom_point(data=dat4, color="red", shape="-", size=15)+
+  geom_violin(fill="grey", size=1.5)+
+  geom_point(data=dat4, color="red", shape="-", size=20)+
   labs(y="", x="")+
-  theme(axis.text.x = element_text(size=20, face="bold"),
-        axis.text.y = element_text(size=20, face="bold"), legend.position = "none")+
+  theme(axis.text.x = element_text(size=30, face="bold"),
+        axis.text.y = element_text(size=30, face="bold"), legend.position = "none")+
   scale_x_discrete(limits=pos3, labels=c('pA_S' = parse(text = TeX("$p_{A_S}$")), 'pA_W' = parse(text = TeX("$p_{A_W}$")), 
                                         'pB_S' = parse(text = TeX("$p_{B_S}$")), 'pB_W' = parse(text = TeX("$p_{B_W}$"))))
 
@@ -127,12 +127,20 @@ ggplot(data=dat5, aes(x=par, y=sims, fill="grey"))+
   geom_point(data=dat6, color="red", shape="-", size=15)+
   labs(y="", x="")+
   facet_wrap(~block, labeller = label_parsed, ncol=4)+
-    theme(strip.text = element_text(size=16,face="bold"), axis.text.x = element_text(size=20, face="bold"),
-        axis.text.y = element_text(size=20, face="bold"), legend.position = "none")+
+    theme(strip.text = element_text(size=30,face="bold"), axis.text.x = element_text(size=30, face="bold"),
+        axis.text.y = element_text(size=30, face="bold"), legend.position = "none")+
   scale_x_discrete(limits=pos5, 
-                   labels=c('psi1' = parse(text = TeX("$\\psi_{1}$")), 'psi2' = parse(text = TeX("$\\psi_{2}$")), 'psi3' = parse(text = TeX("$\\psi_{3}$"))))
+                   labels=c('psi1' = parse(text = TeX("$\\psi_{A}$")), 'psi2' = parse(text = TeX("$\\psi_{B}$")), 'psi3' = parse(text = TeX("$\\psi_{AB}$"))))
 
 
 # save the model
 ggsave("modperf_va_snowbed_mustela_rodent_sdet_s1_203_psi_2.png", width = 60, height = 30, units="cm")
 
+
+#############################
+# quick calculation of interaction effects
+va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$gamA/va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$gamAB # gamAB 5 time lower than gamA
+va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$epsAB/va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$epsA # epsAB more than 6 times higher than epsA
+
+va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$gamBA/va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$gamB # gamBA 1.28 times higher than gamB
+va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$epsBA/va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$epsB # epsBA 2.2 times higher than epsB
