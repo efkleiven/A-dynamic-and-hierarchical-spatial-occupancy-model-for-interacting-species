@@ -21,7 +21,7 @@ cat("
     ###########################################
     ### Spatial Dynamic Co-Occurrence Model ###
     ###########################################
-    # State 1= Unoccupied(U), State 2= vole(A), State 3 = stoat(B), State 4 = vole & stoat(AB)  
+    # State 1= Unoccupied(U), State 2= rodent(A), State 3 = mustelid(B), State 4 = rodent & mustelid(AB)  
     ########################################### 
    
     ##############
@@ -191,7 +191,6 @@ cat("
     dpm[t, 4, 4] <- pA[t] * pB[t]          #--|OS = AB
     
     ## logit links for detection probs
-    
     logit(pA[t]) <- alphaA0 + alphaA1 * season[t]
     logit(pB[t]) <- alphaB0 + alphaB1 * season[t]
 
@@ -205,7 +204,7 @@ setwd("./data") # set wd to where the data is stored
 
 load("occm_mustela_rodent_var_snowbed.rda")    
 
-yb <-occm_ko3 # change name to fit with rest of the code
+yb <-occm_ko3 # change name of imported object to fit with the rest of the code
 
 dim(yb) # check that dimentions are ok
 
@@ -267,3 +266,5 @@ va_snowbed_mustela_rodent_sdet_s1_203_ni250k <- jags(data, inits=inits, params, 
 # Save model
 setwd("./model_output")
 save(va_snowbed_mustela_rodent_sdet_s1_203_ni250k, file="va_snowbed_mustela_rodent_sdet_s1_203_ni250k.rda")
+
+#~ End of script

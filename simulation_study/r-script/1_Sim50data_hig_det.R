@@ -209,10 +209,13 @@ save(y_hig_det, file="simdata_50set_50seas_y_hig_det.rda")
 save(z_hig_det, file="simdata_50set_50seas_z_hig_det.rda")
 save(x_hig_det, file="simdata_50set_50seas_x_hig_det.rda")
 
-###############################
-## plotting
+##############################################
+## plot occupancy and observations per week ##
+##############################################
 
-# do it on site level
+# plot occuoancy per week
+
+# merge blocks
 z <- abind(z_hig_det[1,,1,],z_hig_det[1,,2,],z_hig_det[1,,3,],z_hig_det[1,,4,],along=1)
 
 ## reduce to N or not N
@@ -229,12 +232,13 @@ for(t in 1:50){
     P[i,t] <- ifelse(is.element(3, z[i,t])==TRUE | is.element(4, z[i,t])==TRUE, 1,0) 
   }}
 
-## proportion of sites occupied ##
+## calculate proportion of sites occupied ##
 mean.z <- apply(N,c(2),mean) 
 mean.p <- apply(P,c(2),mean) 
 
 # plot trend in occupancy
-setwd("../plot")
+
+setwd("../plot") # set directory where plots should be stored
 
 png("OccTrends_mid_det.png", width=960, height=480)  #  save plot
 plot(mean.z, type="l", col="blue", ylim=c(0,0.7), xlab="seasons", main="Trend in occupancy")
@@ -242,7 +246,11 @@ lines(mean.p, type="l", col="red")
 legend("topright", legend=c("Prey", "Predator"), lty=1,col=c("blue","red"))
 dev.off()
 
-# plot trend in detections
+##############################
+# plot trend in observations #
+##############################
+
+# merge blocks
 y <- abind(y_hig_det[1,,1,,],y_hig_det[1,,2,,],y_hig_det[1,,3,,],y_hig_det[1,,4,,],along=1)
 
 ## reduce to N or not N
@@ -259,7 +267,7 @@ for(t in 1:50){
     P[i,t] <- ifelse(is.element(3, y[i,,t])==TRUE | is.element(4, y[i,,t])==TRUE, 1,0) 
   }}
 
-## make mean occupancy
+## calculate mean obervations per week
 mean.n <- apply(N,c(2),mean) 
 mean.p <- apply(P,c(2),mean) 
 

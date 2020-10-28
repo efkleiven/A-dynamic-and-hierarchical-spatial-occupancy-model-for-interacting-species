@@ -10,6 +10,7 @@ rm(list=ls())
 # Call jags(and other packages)
 library(jagsUI)
 library(ggplot2)
+library(latex2exp)
 
 # set working directory
 setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel/models")    # for norpec-server
@@ -19,20 +20,11 @@ setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyMode
 setwd("./hidden_block_ko_fromautoclass/ko_vj/model_output")
 dir()
 
- load("va_snowbed_mustela_rodent_sdet_s1_203_ni250k.rda")
-
-#####################################
-###   violin plot with ggplot2    ###
-#####################################
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#   va_snowbed_mustela_vole_sdet_s1_203     #
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+load("va_snowbed_mustela_rodent_sdet_s1_203_ni250k.rda")
 
 ##############################################################################
 
- # creat df in the right format for ggplot
+ # creat df in a format suitable for ggplot
 dat <- data.frame(sims=unlist(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list[c(1:8,10:17)]),
                   par=c(rep("gamA", times=40000),rep("gamB", times=40000),rep("gamAB", times=40000),rep("gamBA", times=40000),
                         rep("epsA", times=40000),rep("epsB", times=40000),rep("epsAB", times=40000),rep("epsBA", times=40000),
@@ -44,11 +36,11 @@ dat <- data.frame(sims=unlist(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.
                     par=c("gamA", "gamB", "gamAB", "gamBA", "epsA", "epsB", "epsAB", "epsBA",
                           "GamA", "GamB", "GamAB", "GamBA", "EpsA", "EpsB", "EpsAB", "EpsBA"))
  
-# make a seperate array with estimates from all model runs for all gammas, epsilons and ps
+# spesify what order to plot the simulations
 pos <-c("gamA", "gamB", "gamAB", "gamBA",
         "epsA", "epsB", "epsAB", "epsBA",
         "GamA", "GamB", "GamAB", "GamBA",
-        "EpsA", "EpsB", "EpsAB", "EpsBA")  # spesify what order to plot the simulations
+        "EpsA", "EpsB", "EpsAB", "EpsBA")  
 
 
 # plot colonization and extinction probabilities
@@ -71,10 +63,10 @@ ggplot(data=dat, aes(x=par, y=sims, fill="grey"))+
 setwd("../plot")
 ggsave("modperf_va_snowbed_mustela_rodent_sdet_s1_203_site&block.png", width = 60, height = 20, units="cm")
 
+###########################################################################################################################
+##    Plot estimated detection probabilities
 
-## plot estimated detection probabilities
-
-# making df in the right format for ggplot
+# making df in a suitable format for ggplot
 dat3 <- data.frame(sims=c(unlist(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list[18][[1]][,c(1,15)]),
                           unlist(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list[19][[1]][,c(1,15)])),
            par=c(rep("pA_S", times=40000), rep("pA_W", times=40000), rep("pB_S", times=40000), rep("pB_W", times=40000)) )
@@ -84,7 +76,7 @@ dat4 <- data.frame(sims=c(unlist(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$me
                    par=c("pA_S", "pA_W", "pB_S", "pB_W"))
 
 # specifing what order the parameters should be plotted
-pos3 <-c("pA_S", "pA_W", "pB_S", "pB_W")  # spesify what order to plot the simulations
+pos3 <-c("pA_S", "pA_W", "pB_S", "pB_W")  
 
 #make plot
 ggplot(data=dat3, aes(x=par, y=sims, fill="grey"))+
@@ -103,7 +95,7 @@ ggsave("modperf_va_snowbed_mustela_rodent_sdet_s1_203_p.png", width = 60, height
 
 ## plot estimated initial occupancy probability
 
-# make df with the structure correct structure for ggplot
+# make df with a suitable structure for ggplot
 dat5 <- data.frame(sims=c(as.vector(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list$psi[,,1]),
                           as.vector(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list$psi[,,2]),
                           as.vector(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list$psi[,,3])),
@@ -117,8 +109,8 @@ dat6 <- data.frame(sims=c(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$psi[
                    par=c(rep("psi1", times=8),rep("psi2", times=8),rep("psi3", times=8)),
                    block=c(rep(c("b1","b2","b3","b4","b5","b6","b7","b8"), times=3)) )
 
-
-pos5 <-c("psi1","psi2","psi3")  # spesify what order to plot the simulations
+# spesify what order to plot the simulations
+pos5 <-c("psi1","psi2","psi3")  
 
 # make plot
 ggplot(data=dat5, aes(x=par, y=sims, fill="grey"))+
@@ -144,3 +136,5 @@ va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$epsAB/va_snowbed_mustela_roden
 
 va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$gamBA/va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$gamB # gamBA 1.28 times higher than gamB
 va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$epsBA/va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$epsB # epsBA 2.2 times higher than epsB
+
+#~ End of Script
