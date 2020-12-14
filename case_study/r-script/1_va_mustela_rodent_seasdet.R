@@ -1,7 +1,8 @@
-################################################################################################################################################
-##          Spatial Dynamic two-species occupancy model analyzing data a long-term monitoring program of small mammals on the arctic tundra   ##
-##                                  by Eivind Flittie Kleiven and Frederic Barraquand                                                         ##
-################################################################################################################################################
+###################################################################################################################
+##  A dynamic and hierarchical spatial occupancy model for interacting species model analyzing data from         ##  
+##  a long-term monitoring program of small mammals on the arctic tundra                                         ##
+##                 by Eivind Flittie Kleiven and Frederic Barraquand                                             ##
+###################################################################################################################
 
 # Call jags(and other packages)
 rm(list=ls())
@@ -206,7 +207,7 @@ load("occm_mustela_rodent_var_snowbed.rda")
 
 yb <-occm_ko3 # change name of imported object to fit with the rest of the code
 
-dim(yb) # check that dimentions are ok
+dim(yb) # check that dimensions are ok
 
 #load cov
 load("season.rda") 
@@ -216,7 +217,7 @@ season <- season[1:203]
 data <-list(nseason = dim(yb)[3], nblock = dim(yb)[2], nsite = dim(yb)[1], nsurvey = dim(yb)[4], 
             nout=4, y = yb, season = season)
 
-# naming some parameters for loopes further down in this script
+# naming some parameters for loops further down in this script
 nseason = dim(yb)[3]; nblock = dim(yb)[2]; nsite = dim(yb)[1]; nsurvey = dim(yb)[4]
 
 # Initial values for state

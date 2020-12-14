@@ -1,7 +1,7 @@
-#####################################################################################################################
-##          Spatial Dynamic two-species occupancy model analyzing simulated data under a mid detection scenario    ##
-##                                  by Eivind Flittie Kleiven and Frederic Barraquand                              ##
-#####################################################################################################################
+#########################################################################################################################################
+## A dynamic and hierarchical spatial occupancy model for interacting species analyzing simulated data under a mid detection scenario  ##
+##                                  by Eivind Flittie Kleiven and Frederic Barraquand                                                  ##
+#########################################################################################################################################
 
 # clear work space
 rm(list=ls())

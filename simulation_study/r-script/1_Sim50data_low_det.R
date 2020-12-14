@@ -35,7 +35,7 @@ pA <- 0.2
 pB <- 0.1
 
 ########################
-# site level paramters
+# site level parameters
 ########################
 
 # colonization probability
@@ -87,7 +87,7 @@ x_low_det[d,b,1] <- ifelse(sum(z_low_det[d,,b,1]==1) == M, 1,
 
 ######
 # Latent state for dynamic part of model
-# btpm = block transition probability matrix. All columns sum to 1.
+# btpm = block transition probability matrix.
 ######
 
 # U to ...
@@ -120,12 +120,12 @@ for(d in 1:ndat){
 # generate latent block state
 x_low_det[d,b,t+1] <- rcat(1, btpm[ ,x_low_det[d,b,t]])
 
-######################################################################
-## stpm = site transition probability matrix. All columns sum to 1. ##
-######################################################################
+#################################################
+## stpm = site transition probability matrix.  ##
+#################################################
 
   # U to ...
-  stpm[d, , t, 1, 1] <- (1-gamA*((x_low_det[d, b, t+1] == 2)+(x_low_det[d, b, t+1] == 4))) * (1-gamB*((x_low_det[d, b, t+1] == 3)+(x_low_det[d, b, t+1] == 4)))  #--|U
+  stpm[d, b, t, 1, 1] <- (1-gamA*((x_low_det[d, b, t+1] == 2)+(x_low_det[d, b, t+1] == 4))) * (1-gamB*((x_low_det[d, b, t+1] == 3)+(x_low_det[d, b, t+1] == 4)))  #--|U
   stpm[d, b, t, 2, 1] <- gamA *((x_low_det[d, b, t+1] == 2)+(x_low_det[d, b, t+1] == 4)) * (1-gamB*((x_low_det[d, b, t+1] == 3)+(x_low_det[d, b, t+1] == 4)))    #--|A
   stpm[d, b, t, 3, 1] <- (1-gamA*((x_low_det[d, b, t+1] == 2)+(x_low_det[d, b, t+1] == 4)) ) * gamB *((x_low_det[d, b, t+1] == 3)+(x_low_det[d, b, t+1] == 4))   #--|B
   stpm[d, b, t, 4, 1] <- gamA * gamB *(x_low_det[d, b, t+1] == 4)                                                                                                #--|AB
@@ -160,7 +160,7 @@ for(i in 1:M){ # Loop over sites
 
 ######
 # detection matrix (OS = observed state, TS = true state)
-# rdm = rho detection matrix. Each row sums to 1.
+# rdm = rho detection matrix. 
 ######
 # TS = U
 rdm[1, 1] <- 1      #----------|OS = U

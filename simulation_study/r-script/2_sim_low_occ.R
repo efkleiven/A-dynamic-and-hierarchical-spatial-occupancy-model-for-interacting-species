@@ -1,16 +1,7 @@
-########################################################################################################################################
-##          Spatial Dynamic two-species occupancy model for analyzing data from a summerseason in Komag                               ##
-##                                  by EFK and FB                                                                                     ##
-##                                                                                                                                    ##
-## The transition probability matrix is a slightly simplifies version of what is presenter in MacKenzie et al. 2017.                  ##
-## Initial values for latent state are esitmated as the highest observed stated                                                       ##
-## The detection model is a two parameters where we assume indendence between detections of the two species probabilities             ##
-## We have added a spatial hierarchy with blocks with multiple sites within each block                                                ##
-## Detection is models with a binary season co-variate                                                                                ##                                                                                               
-##                                                                                                                                    ##
-##  In this script we analyse 50 sets of simulated simulated data (hig_occ)                                                     ##                                                                           
-##  last updated 16.4.20 by EFK                                                                                                                                  ##    
-########################################################################################################################################
+##########################################################################################################################################
+##  A dynamic and hierarchical spatial occupancy model for interacting species analyzing simulated data under a low occupancy scenario  ##
+##                                  by Eivind Flittie Kleiven and Frederic Barraquand                                                   ##
+##########################################################################################################################################
 
 # Call jags(and other packages)
 rm(list=ls())
@@ -19,7 +10,6 @@ library(jagsUI)
 
 # set working directory
 setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel")
-
 setwd("./models/hidden_block_sim")
 
 #
@@ -246,7 +236,7 @@ inits=function(){list(
   EpsB=runif(1), EpsAB=runif(1), EpsBA=runif(1)
 )}
 
-# loop to make cases where both state 2 and 3 is observed within the same sampling occation have initial value 4
+# loop to make cases where both state 2 and 3 is observed within the same sampling occasion have initial value 4
 dataL <- array(0,dim=c(nsite,nblock,nseason))
 for(j in 1:nsite){
   for(b in 1:nblock){

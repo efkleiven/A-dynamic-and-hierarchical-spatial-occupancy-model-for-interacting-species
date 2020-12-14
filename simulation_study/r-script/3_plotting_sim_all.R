@@ -1,7 +1,7 @@
-################################################################################################
-##  Plots comapring model estimates from the hidden block model with true parameters values   ##
-##              by EFK                                                                        ##
-################################################################################################
+######################################################################################################################################################
+##  Plots comparing model estimates from the dynamic and hierarchical spatial occupancy model for interacting species with true parameters values   ##
+##              by EFK                                                                                                                              ##
+######################################################################################################################################################
 
 rm(list=ls())
 
@@ -11,19 +11,16 @@ library(ggplot2)
 library(latex2exp)
 
 # set working directory
-setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel/models")    # for norpec-server
-#setwd("H:/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel/models")  # for laptop
-
-#load model outputs
+setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel/models")   
 setwd("./hidden_block_sim/model_output")
 
+#load model outputs
 load("mod_hidden_sim_low_det.rda")
 load("mod_hidden_sim_mid_det.rda")
 load("mod_hidden_sim_hig_det.rda")
 load("mod_hidden_sim_low_occ.rda")
 load("mod_hidden_sim_mid_occ.rda")
 load("mod_hidden_sim_hig_occ.rda")
-
 
 ###################################
 ### violin plot with ggplot2

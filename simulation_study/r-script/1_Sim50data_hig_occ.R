@@ -34,7 +34,7 @@ pA <- 0.5
 pB <- 0.5
 
 ########################
-# site level paramters
+# site level parameters
 ########################
 
 # colonization probability
@@ -86,7 +86,7 @@ x_hig_occ[d,b,1] <- ifelse(sum(z_hig_occ[d,,b,1]==1) == M, 1,
 
 ######
 # Latent state for dynamic part of model
-# btpm = block transition probability matrix. All columns sum to 1.
+# btpm = block transition probability matrix. 
 ######
 
 # U to ...
@@ -109,7 +109,7 @@ btpm[4, 3] <- GamAB * (1-EpsB)       #--|AB
 
 # AB to ..
 btpm[1, 4] <- EpsAB * EpsBA          #--|U
-btpm[2, 4] <- (1-EpsAB) * EpsBA     #--|A
+btpm[2, 4] <- (1-EpsAB) * EpsBA      #--|A
 btpm[3, 4] <- EpsAB * (1-EpsBA)      #--|B
 btpm[4, 4] <- (1-EpsAB) * (1-EpsBA)  #--|AB
 
@@ -120,14 +120,11 @@ for(d in 1:ndat){
 x_hig_occ[d,b,t+1] <- rcat(1, btpm[ ,x_hig_occ[d,b,t]])
 
 ######################################################################
-## stpm = site transition probability matrix. All columns sum to 1. ##
-## dim(tpm)[1] = site j                                             ##
-## dim(tpm)[2] = state at time t                                    ##
-## dim(tpm)[3] = state at time t-1                                  ##
+## stpm = site transition probability matrix.                       ##
 ######################################################################
 
   # U to ...
-  stpm[d, , t, 1, 1] <- (1-gamA*((x_hig_occ[d, b, t+1] == 2)+(x_hig_occ[d, b, t+1] == 4))) * (1-gamB*((x_hig_occ[d, b, t+1] == 3)+(x_hig_occ[d, b, t+1] == 4)))  #--|U
+  stpm[d, b, t, 1, 1] <- (1-gamA*((x_hig_occ[d, b, t+1] == 2)+(x_hig_occ[d, b, t+1] == 4))) * (1-gamB*((x_hig_occ[d, b, t+1] == 3)+(x_hig_occ[d, b, t+1] == 4)))  #--|U
   stpm[d, b, t, 2, 1] <- gamA *((x_hig_occ[d, b, t+1] == 2)+(x_hig_occ[d, b, t+1] == 4)) * (1-gamB*((x_hig_occ[d, b, t+1] == 3)+(x_hig_occ[d, b, t+1] == 4)))    #--|A
   stpm[d, b, t, 3, 1] <- (1-gamA*((x_hig_occ[d, b, t+1] == 2)+(x_hig_occ[d, b, t+1] == 4)) ) * gamB *((x_hig_occ[d, b, t+1] == 3)+(x_hig_occ[d, b, t+1] == 4))   #--|B
   stpm[d, b, t, 4, 1] <- gamA * gamB *(x_hig_occ[d, b, t+1] == 4)                                                                                                #--|AB
@@ -163,8 +160,8 @@ for(i in 1:M){ # Loop over sites
 
 ######
 # detection matrix (OS = observed state, TS = true state)
-# rdm = rho detection matrix. Each row sums to 1.
-# OS along rows, TS along columns
+# rdm = rho detection matrix. 
+# Observed States along rows, True States along columns
 ######
 # TS = U
 rdm[1, 1] <- 1    #------------|OS = U

@@ -1,7 +1,7 @@
-#####################################################################################################################
-##          Spatial Dynamic two-species occupancy model analyzing simulated data under a low detection scenario    ##
-##                                  by Eivind Flittie Kleiven and Frederic Barraquand                              ##
-#####################################################################################################################
+##########################################################################################################################################
+## A dynamic and hierarchical spatial occupancy model for interacting species analyzing simulated data under a low detection scenario   ##
+##                                  by Eivind Flittie Kleiven and Frederic Barraquand                                                   ##
+##########################################################################################################################################
 
 # clear work space
 rm(list=ls())
@@ -229,7 +229,7 @@ for(q in 1:50){
     EpsB=runif(1), EpsAB=runif(1), EpsBA=runif(1)
   )}
   
-  # loop to make cases where both state 2 and 3 is observed within the same sampling occation have initial value 4
+  # loop to make cases where both state 2 and 3 is observed within the same sampling occasion have initial value 4
   dataL <- array(0,dim=c(nsite,nblock,nseason))
   for(j in 1:nsite){
     for(b in 1:nblock){

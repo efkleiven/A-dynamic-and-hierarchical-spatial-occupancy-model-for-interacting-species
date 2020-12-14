@@ -1,8 +1,8 @@
-###############################################################################################################################
-##                    Plotting the model output of  the Spatial Dynamic two-species occupancy model                          ##
-##                                                                                                                           ##
-##                         by EFK and FB                                                                                     ##
-###############################################################################################################################
+#####################################################################################################################################
+##                    Plotting the model output from the dynamic and hierarchical spatial occupancy model for interacting species  ##
+##                    analyzing the small mammal data from the Varanger peninsula                                                  ##
+##                         by EFK and FB                                                                                           ##
+#####################################################################################################################################
 
 # empty environment
 rm(list=ls())
@@ -13,8 +13,7 @@ library(ggplot2)
 library(latex2exp)
 
 # set working directory
-setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel/models")    # for norpec-server
-#setwd("H:/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel/models")  # for laptop
+setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel/models")
 
 #load model
 setwd("./hidden_block_ko_fromautoclass/ko_vj/model_output")
@@ -24,7 +23,7 @@ load("va_snowbed_mustela_rodent_sdet_s1_203_ni250k.rda")
 
 ##############################################################################
 
- # creat df in a format suitable for ggplot
+ # create df in a format suitable for ggplot
 dat <- data.frame(sims=unlist(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.list[c(1:8,10:17)]),
                   par=c(rep("gamA", times=40000),rep("gamB", times=40000),rep("gamAB", times=40000),rep("gamBA", times=40000),
                         rep("epsA", times=40000),rep("epsB", times=40000),rep("epsAB", times=40000),rep("epsBA", times=40000),
@@ -36,7 +35,7 @@ dat <- data.frame(sims=unlist(va_snowbed_mustela_rodent_sdet_s1_203_ni250k$sims.
                     par=c("gamA", "gamB", "gamAB", "gamBA", "epsA", "epsB", "epsAB", "epsBA",
                           "GamA", "GamB", "GamAB", "GamBA", "EpsA", "EpsB", "EpsAB", "EpsBA"))
  
-# spesify what order to plot the simulations
+# specify what order to plot the simulations
 pos <-c("gamA", "gamB", "gamAB", "gamBA",
         "epsA", "epsB", "epsAB", "epsBA",
         "GamA", "GamB", "GamAB", "GamBA",

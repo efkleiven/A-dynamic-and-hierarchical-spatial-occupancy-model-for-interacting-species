@@ -34,7 +34,7 @@ pA <- 0.9
 pB <- 0.8
 
 ########################
-# site level paramters
+# site level parameters
 ########################
 # colonization probability
 gamA <- 0.5 
@@ -85,7 +85,7 @@ x_hig_det[d,b,1] <- ifelse(sum(z_hig_det[d,,b,1]==1) == M, 1,
 
 ######
 # Latent state for dynamic part of model
-# btpm = Block level transition probability matrix. All columns sum to 1.
+# btpm = Block level transition probability matrix.
 ######
 
 # U to ...
@@ -108,7 +108,7 @@ btpm[4, 3] <- GamAB * (1-EpsB)       #--|AB
 
 # AB to ..
 btpm[1, 4] <- EpsAB * EpsBA          #--|U
-btpm[2, 4] <- (1-EpsAB) * EpsBA     #--|A
+btpm[2, 4] <- (1-EpsAB) * EpsBA      #--|A
 btpm[3, 4] <- EpsAB * (1-EpsBA)      #--|B
 btpm[4, 4] <- (1-EpsAB) * (1-EpsBA)  #--|AB
 
@@ -120,10 +120,7 @@ for(d in 1:ndat){
 x_hig_det[d,b,t+1] <- rcat(1, btpm[ ,x_hig_det[d,b,t]])
 
 ######################################################################
-## stpm = site transition probability matrix. All columns sum to 1. ##
-## dim(tpm)[1] = site j                                             ##
-## dim(tpm)[2] = state at time t                                    ##
-## dim(tpm)[3] = state at time t-1                                  ##
+## stpm = site transition probability matrix.                       ##
 ######################################################################
 
   # U to ...
@@ -213,7 +210,7 @@ save(x_hig_det, file="simdata_50set_50seas_x_hig_det.rda")
 ## plot occupancy and observations per week ##
 ##############################################
 
-# plot occuoancy per week
+# plot occupancy per week
 
 # merge blocks
 z <- abind(z_hig_det[1,,1,],z_hig_det[1,,2,],z_hig_det[1,,3,],z_hig_det[1,,4,],along=1)

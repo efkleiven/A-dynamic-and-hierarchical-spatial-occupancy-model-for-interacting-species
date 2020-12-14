@@ -87,7 +87,7 @@ x_mid_occ[d,b,1] <- ifelse(sum(z_mid_occ[d,,b,1]==1) == M, 1,
 
 ######
 # Latent state for dynamic part of model
-# btpm = block transition probability matrix. All columns sum to 1.
+# btpm = block transition probability matrix. 
 ######
 
 # U to ...
@@ -128,7 +128,7 @@ x_mid_occ[d,b,t+1] <- rcat(1, btpm[ ,x_mid_occ[d,b,t]])
 ######################################################################
 
   # U to ...
-  stpm[d, , t, 1, 1] <- (1-gamA*((x_mid_occ[d, b, t+1] == 2)+(x_mid_occ[d, b, t+1] == 4))) * (1-gamB*((x_mid_occ[d, b, t+1] == 3)+(x_mid_occ[d, b, t+1] == 4))) #--|U
+  stpm[d, b, t, 1, 1] <- (1-gamA*((x_mid_occ[d, b, t+1] == 2)+(x_mid_occ[d, b, t+1] == 4))) * (1-gamB*((x_mid_occ[d, b, t+1] == 3)+(x_mid_occ[d, b, t+1] == 4))) #--|U
   stpm[d, b, t, 2, 1] <- gamA *((x_mid_occ[d, b, t+1] == 2)+(x_mid_occ[d, b, t+1] == 4)) * (1-gamB*((x_mid_occ[d, b, t+1] == 3)+(x_mid_occ[d, b, t+1] == 4)))   #--|A
   stpm[d, b, t, 3, 1] <- (1-gamA*((x_mid_occ[d, b, t+1] == 2)+(x_mid_occ[d, b, t+1] == 4)) ) * gamB *((x_mid_occ[d, b, t+1] == 3)+(x_mid_occ[d, b, t+1] == 4))  #--|B
   stpm[d, b, t, 4, 1] <- gamA * gamB *(x_mid_occ[d, b, t+1] == 4)                                                                                               #--|AB
@@ -164,7 +164,7 @@ for(i in 1:M){ # Loop over sites
 
 ######
 # detection matrix (OS = observed state, TS = true state)
-# rdm = rho detection matrix. Each row sums to 1.
+# rdm = rho detection matrix. 
 # OS along rows, TS along columns
 ######
 # TS = U
