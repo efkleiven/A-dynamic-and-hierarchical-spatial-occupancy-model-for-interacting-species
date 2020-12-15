@@ -193,8 +193,8 @@ sink()
 setwd("./data")
 
 # data simulated under this model
-load("simdata_50set_50seas_y_hig_det.rda")     # data simulated under this model
-
+#load("simdata_50set_50seas_y_hig_det.rda")     # data simulated under this model
+load("SimData.RData")
 # Parameters monitored
 params <- c("gamA","gamB","gamAB","gamBA","epsA","epsB","epsAB","epsBA","psi",
             "GamA","GamB","GamAB","GamBA","EpsA","EpsB","EpsAB","EpsBA", "Psi", "pA","pB",

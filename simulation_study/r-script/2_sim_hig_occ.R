@@ -200,7 +200,8 @@ sink()
 setwd("./data")
 
 # data simulated under this model
-load("simdata_50set_50seas_y_hig_occ.rda")     # data simulated under this model
+#load("simdata_50set_50seas_y_hig_occ.rda")     # data simulated under this model
+load("SimData.RData")
 
 # Parameters monitored
 params <- c("gamA","gamB","gamAB","gamBA","epsA","epsB","epsAB","epsBA","psi",
@@ -236,7 +237,7 @@ inits=function(){list(
   EpsB=runif(1), EpsAB=runif(1), EpsBA=runif(1)
 )}
 
-# loop to make cases where both state 2 and 3 is observed within the same sampling occation have initial value 4
+# loop to make cases where both state 2 and 3 is observed within the same sampling occasion have initial value 4
 dataL <- array(0,dim=c(nsite,nblock,nseason))
 for(j in 1:nsite){
   for(b in 1:nblock){

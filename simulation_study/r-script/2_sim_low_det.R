@@ -192,7 +192,8 @@ sink()
 setwd("./data")
 
 # data simulated under this model
-load("simdata_50set_50seas_y_low_det.rda")     # data simulated under this model
+#load("simdata_50set_50seas_y_low_det.rda")     # data simulated under this model
+load("SimData.RData")
 dim(y_low_det)
 
 mod_hidden_sim_low_det <- list() # make empty list to store models in
