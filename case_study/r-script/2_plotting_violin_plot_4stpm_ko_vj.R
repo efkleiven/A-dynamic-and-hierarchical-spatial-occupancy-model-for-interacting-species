@@ -34,29 +34,24 @@ dat <- data.frame(sims=unlist(va_snowbed_mustela_rodent_sdet_4stpm_ni100k$sims.l
                         rep("epsA", times=17000),rep("epsB", times=17000),rep("epsAB", times=17000),rep("epsBA", times=17000),
                         rep("GamA", times=17000),rep("GamB", times=17000),rep("GamAB", times=17000),rep("GamBA", times=17000),
                         rep("EpsA", times=17000),rep("EpsB", times=17000),rep("EpsAB", times=17000),rep("EpsBA", times=17000)),
-                  level=c(rep("site", times=17000*8), rep("block", times=17000*8)))
+                  level=c(rep("Site parameters", times=17000*8), rep("Block parameters", times=17000*8)))
 
 
 dat2 <- data.frame(sims=unlist(va_snowbed_mustela_rodent_sdet_4stpm_ni100k$mean[c(1:8,10:17)]),
                    par=c("gamA", "gamB", "gamAB", "gamBA", "epsA", "epsB", "epsAB", "epsBA",
                          "GamA", "GamB", "GamAB", "GamBA", "EpsA", "EpsB", "EpsAB", "EpsBA"),
-                   level=c(rep("site", times=8), rep("block", times=8)))
-
-# specify what order to plot the simulations
-pos <-c("gamA", "gamB", "gamAB", "gamBA",
-        "epsA", "epsB", "epsAB", "epsBA",
-        "GamA", "GamB", "GamAB", "GamBA",
-        "EpsA", "EpsB", "EpsAB", "EpsBA")  
-
+                   level=c(rep("Site parameters", times=8), rep("Block parameters", times=8)))
 
 # plot colonization and extinction probabilities
 ggplot(data=dat, aes(x=par, y=sims, fill="grey"))+
   geom_violin(fill="grey")+
   geom_point(data=dat2, color="red", shape="-", size=20)+
   labs(y="", x="")+
-   theme(axis.text.x = element_text(size=30, face="bold"),
-        axis.text.y = element_text(size=20, face="bold"), legend.position = "none")+
-  scale_x_discrete(limits=pos, labels=c('gamA' = parse(text = TeX("$\\gamma_{A}$")), 'gamB' = parse(text = TeX("$\\gamma_{B}$")), 
+  facet_wrap(~level, scales="free_x")+
+   theme(strip.text = element_text(size=20,face="bold"),
+         axis.text.x = element_text(size=30, face="bold"),
+         axis.text.y = element_text(size=20, face="bold"), legend.position = "none")+
+  scale_x_discrete( labels=c('gamA' = parse(text = TeX("$\\gamma_{A}$")), 'gamB' = parse(text = TeX("$\\gamma_{B}$")), 
                                         'gamAB' = parse(text = TeX("$\\gamma_{AB}$")), 'gamBA' = parse(text = TeX("$\\gamma_{BA}$")),
                                         'epsA' = parse(text = TeX("$\\epsilon_{A}$")), 'epsB' = parse(text = TeX("$\\epsilon_{B}$")),
                                         'epsAB' = parse(text = TeX("$\\epsilon_{AB}$")), 'epsBA' = parse(text = TeX("$\\epsilon_{BA}$")),
@@ -67,7 +62,7 @@ ggplot(data=dat, aes(x=par, y=sims, fill="grey"))+
 
 # save plot
 setwd("../plot")
-ggsave("modperf_va_snowbed_mustela_rodent_sdet_4stpm_s1_203_ni100k_site&block.png", width = 60, height = 20, units="cm")
+ggsave("modperf_va_snowbed_mustela_rodent_sdet_4stpm_s1_203_ni100k_site&block_2.png", width = 60, height = 20, units="cm")
 
 ###########################################################################################################################
 ##    Plot estimated detection probabilities
@@ -134,11 +129,15 @@ ggsave("modperf_va_snowbed_mustela_rodent_sdet_4stpm_s1_203_psi_2.png", width = 
 
 #############################
 # quick calculation of interaction effects
-va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$gamA/va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$gamAB # gamAB 5 time lower than gamA
-va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$epsAB/va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$epsA # epsAB more than 6 times higher than epsA
+va_snowbed_mustela_rodent_sdet_4stpm_ni100k$mean$gamA/va_snowbed_mustela_rodent_sdet_4stpm_ni100k$mean$gamAB # gamAB 45 time lower than gamA
+va_snowbed_mustela_rodent_sdet_4stpm_ni100k$mean$epsAB/va_snowbed_mustela_rodent_sdet_4stpm_ni100k$mean$epsA # epsAB more than 8 times higher than epsA
 
 va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$gamBA/va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$gamB # gamBA 1.28 times higher than gamB
 va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$epsBA/va_snowbed_mustela_rodent_sdet_s1_203_ni250k$mean$epsB # epsBA 2.2 times higher than epsB
+
+va_snowbed_mustela_rodent_sdet_4stpm_ni100k$mean$GamBA/va_snowbed_mustela_rodent_sdet_4stpm_ni100k$mean$GamB 
+
+va_snowbed_mustela_rodent_sdet_4stpm_ni100k$mean$EpsBA/va_snowbed_mustela_rodent_sdet_4stpm_ni100k$mean$GamA
 
 #probability gamAB smaller then gamA
 mean(va_snowbed_mustela_rodent_sdet_4stpm_ni100k$sims.list$gamAB < va_snowbed_mustela_rodent_sdet_4stpm_ni100k$sims.list$gamA)
