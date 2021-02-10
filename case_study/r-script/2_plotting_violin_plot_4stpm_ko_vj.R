@@ -48,9 +48,9 @@ ggplot(data=dat, aes(x=par, y=sims, fill="grey"))+
   geom_point(data=dat2, color="red", shape="-", size=20)+
   labs(y="", x="")+
   facet_wrap(~level, scales="free_x")+
-   theme(strip.text = element_text(size=20,face="bold"),
-         axis.text.x = element_text(size=30, face="bold"),
-         axis.text.y = element_text(size=20, face="bold"), legend.position = "none")+
+   theme(strip.text = element_text(size=30,face="bold"),
+         axis.text.x = element_text(size=40, face="bold"),
+         axis.text.y = element_text(size=30, face="bold"), legend.position = "none")+
   scale_x_discrete( labels=c('gamA' = parse(text = TeX("$\\gamma_{A}$")), 'gamB' = parse(text = TeX("$\\gamma_{B}$")), 
                                         'gamAB' = parse(text = TeX("$\\gamma_{AB}$")), 'gamBA' = parse(text = TeX("$\\gamma_{BA}$")),
                                         'epsA' = parse(text = TeX("$\\epsilon_{A}$")), 'epsB' = parse(text = TeX("$\\epsilon_{B}$")),
@@ -62,7 +62,7 @@ ggplot(data=dat, aes(x=par, y=sims, fill="grey"))+
 
 # save plot
 setwd("../plot")
-ggsave("modperf_va_snowbed_mustela_rodent_sdet_4stpm_s1_203_ni100k_site&block_2.png", width = 60, height = 20, units="cm")
+ggsave("modperf_va_snowbed_mustela_rodent_sdet_4stpm_s1_203_ni100k_site&block_2.png", width = 60, height = 30, units="cm")
 
 ###########################################################################################################################
 ##    Plot estimated detection probabilities
