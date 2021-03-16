@@ -1,5 +1,5 @@
 ###################################################################################################################
-##  A dynamic and hierarchical spatial occupancy model for interacting species model analyzing data from         ##  
+##  A dynamic occupancy model for interacting species with two spatial scales model analyzing data from         ##  
 ##  a long-term monitoring program of small mammals on the arctic tundra                                         ##
 ##                 by Eivind Flittie Kleiven and Frederic Barraquand                                             ##
 ##    Last updated 27.1.21                                                                                       ##
@@ -285,8 +285,30 @@ cat("
     ## logit links for detection probs
     logit(pA[t]) <- alphaA0 + alphaA1 * season[t]
     logit(pB[t]) <- alphaB0 + alphaB1 * season[t]
-
     } #close time loop
+    
+    ## Derived parameters
+    
+    diff_gamA <- gamA - gamAB
+    diff_gamB <- gamB - gamBA
+    diff_epsA <- epsA - epsAB
+    diff_epsB <- epsB - epsBA
+    
+    diff_GamA <- GamA - GamAB
+    diff_GamB <- GamB - GamBA
+    diff_EpsA <- EpsA - EpsAB
+    diff_EpsB <- EpsB - EpsBA
+    
+    ratio_gamA <- gamA / gamAB
+    ratio_gamB <- gamB / gamBA
+    ratio_epsA <- epsAB / epsA
+    ratio_epsB <- epsB / epsBA
+    
+    ratio_GamA <- GamA / GamAB
+    ratio_GamB <- GamBA / GamB
+    ratio_EpsA <- EpsAB / EpsA
+    ratio_EpsB <- EpsB / EpsBA    
+    
     }# end
     ",fill = TRUE)
 sink()
@@ -344,19 +366,21 @@ inits=function(){list(
 # Parameters monitored
 params <- c("gamA","gamB","gamAB","gamBA","epsA","epsB","epsAB","epsBA","psi",
             "GamA","GamB","GamAB","GamBA","EpsA","EpsB","EpsAB","EpsBA", "pA","pB","z","x",
-            "alphaA0","alphaB0","alphaA1","alphaB1")
+            "alphaA0","alphaB0","alphaA1","alphaB1", 
+            "diff_gamA", "diff_gamB", "diff_epsA", "diff_epsB", "diff_GamA", "diff_GamB", "diff_EpsA", "diff_EpsB",
+            "ratio_gamA", "ratio_gamB", "ratio_epsA", "ratio_epsB", "ratio_GamA", "ratio_GamB", "ratio_EpsA", "ratio_EpsB")
 
 # MCMC settings
-ni <- 100000   ;   nt <- 20   ;   nb <- 15000   ;   nc <- 4    ;   na <- 25000
+ni <- 100000   ;   nt <- 20   ;   nb <- 25000   ;   nc <- 4    ;   na <- 25000
 
 # run model in jags
 setwd("../")
 
-va_snowbed_mustela_rodent_sdet_4stpm_ni100k <- jags(data, inits=inits, params, "mod_seas_det_4stpm.txt", n.chains = nc,
+va_snowbed_mustela_rodent_sdet_4stpm_ni100k_3 <- jags(data, inits=inits, params, "mod_seas_det_4stpm.txt", n.chains = nc,
                                                      n.thin = nt, n.iter = ni, n.burnin = nb, n.adapt=na, parallel = T)
 
 # Save model
 setwd("./model_output")
-save(va_snowbed_mustela_rodent_sdet_4stpm_ni100k, file="va_snowbed_mustela_rodent_sdet_4stpm_ni100k.rda")
+save(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_3, file="va_snowbed_mustela_rodent_sdet_4stpm_ni100k_3.rda")
 
 #~ End of script
