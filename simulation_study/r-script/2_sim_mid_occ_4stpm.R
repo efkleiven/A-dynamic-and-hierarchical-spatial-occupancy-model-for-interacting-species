@@ -1,5 +1,5 @@
 ##########################################################################################################################################
-##  A dynamic and hierarchical spatial occupancy model for interacting species analyzing simulated data under a mid occupancy scenario  ##
+##  A dynamic occupancy model for interacting species with two spatial scales analyzing simulated data under a mid occupancy scenario  ##
 ##                                  by Eivind Flittie Kleiven and Frederic Barraquand                                                   ##
 ##########################################################################################################################################
 

@@ -1,5 +1,5 @@
 ######################################################################################################################################################
-##  Plots comparing model estimates from the dynamic and hierarchical spatial occupancy model for interacting species with true parameters values   ##
+##  Plots comparing model estimates from the A dynamic occupancy model for interacting species with two spatial scales with true parameters values   ##
 ##              by EFK                                                                                                                              ##
 ######################################################################################################################################################
 

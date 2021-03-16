@@ -1,7 +1,7 @@
-#####################################################################################################################
-##          Spatial Dynamic two-species occupancy model analyzing simulated data under a high occupancy scenario   ##
-##                                  by Eivind Flittie Kleiven and Frederic Barraquand                              ##
-#####################################################################################################################
+###################################################################################################################################################
+##          A dynamic occupancy model for interacting species with two spatial scales analyzing simulated data under a high occupancy scenario   ##
+##                                  by Eivind Flittie Kleiven and Frederic Barraquand                                                            ##
+###################################################################################################################################################
 
 # Call jags(and other packages)
 rm(list=ls())

@@ -1,6 +1,6 @@
 ####################################################################################
 ## Simulation study                                                               ##
-## A dynamic and hiearchical spatial occupancy model for interacting species      ##
+## A dynamic occupancy model for interacting species with two spatial scales      ##
 ## In this script we simulate data under the low occupancy scenario               ##
 ##                                                                                ##
 ## by Eivind Flittie Kleiven and Frederic Barraquand                              ##
