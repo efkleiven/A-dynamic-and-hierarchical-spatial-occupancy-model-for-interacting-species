@@ -17,7 +17,7 @@ setwd("./models/hidden_block_sim")
 setwd("./data")
 
 # data simulated under this model
-load("simdata_50set_50seas_y_low_det.rda")     # data simulated under this model
+load("simdata_50set_50seas_8b_y_low_det.rda")     # data simulated under this model
 #load("SimData.RData")
 dim(y_low_det)
 
@@ -82,5 +82,5 @@ for(q in 1:50){
 
 # Save model
 setwd("./model_output")
-save(mod_4stpm_sim_low_det, file="mod_4stpm_sim_low_det.rda")
+save(mod_4stpm_sim_low_det, file="mod_4stpm_sim_low_det_2.rda")
 

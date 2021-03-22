@@ -15,11 +15,11 @@ setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyMode
 setwd("./hidden_block_sim/model_output")
 
 #load model outputs
-load("mod_4stpm_sim_low_det.rda")
-load("mod_4stpm_sim_mid_det.rda")
+load("mod_4stpm_sim_low_det_2.rda")
+load("mod_4stpm_sim_mid_det_2.rda")
 load("mod_4stpm_sim_hig_det.rda")
-load("mod_4stpm_sim_low_occ.rda")
-load("mod_4stpm_sim_mid_occ.rda")
+load("mod_4stpm_sim_low_occ_2.rda")
+load("mod_4stpm_sim_mid_occ_2.rda")
 load("mod_4stpm_sim_hig_occ.rda")
 
 ####
@@ -215,16 +215,16 @@ ggplot(data=dat, aes(x=sim, y=dat, fill="grey"))+
   geom_point(data=true, color="red", shape="-", size=12)+
   labs(y="", x="")+
   facet_wrap(~param, labeller = label_parsed, ncol=4)+
-  theme(strip.text = element_text(size=12,face="bold"), 
-        axis.text.x = element_text( size = 12, face="bold"), 
-        axis.text.y = element_text( size = 12, face="bold"),
+  theme(strip.text = element_text(size=14,face="bold"), 
+        axis.text.x = element_text( size = 14, face="bold"), 
+        axis.text.y = element_text( size = 14, face="bold"),
         legend.position = "none")+
   scale_x_discrete(limits = positions)+
   scale_y_continuous(breaks = c(0, 0.5, 1))
 
 # save plot
 setwd("../plot")
-ggsave( "modelperformance_4stpm_sim_gameps.png")
+ggsave( "modelperformance_4stpm_sim_gameps_2.png", width = 24, height = 20,units="cm", dpi = 300)
 
 
 ###########################################################
@@ -280,7 +280,7 @@ ggplot(data=dat_p, aes(x=sim, y=dat_p, fill="grey"))+
         legend.position = "none")+
   scale_x_discrete(limits = positions)
 
-ggsave("modelperformance_4stpm_sim_p.png")
+ggsave("modelperformance_4stpm_sim_p_2.png")
 
 ###########################################################
 ## violin plot for initial occupancy probabilities (psi)  ###
@@ -338,6 +338,28 @@ ggplot(data=dat_psi, aes(x=sim, y=dat_psi, fill="grey"))+
         legend.position = "none")+
   scale_x_discrete(limits = positions)
 
-ggsave("modelperformance_4stpm_sim_psi.png")
+ggsave("modelperformance_4stpm_sim_psi_2.png")
 
 #~ end of script
+
+
+str(mod_4stpm_sim_low_det)
+str(dat)
+library(dplyr)
+
+sub <- filter(dat, param == "Ε[B]", sim == "ld") 
+
+mean(sub$dat)# mean of simulation means = 0.72
+true         # true EB under ld = 0.6
+
+0.1288/0.6 # 21% bias
+
+
+sub2 <- filter(dat, param == "Ε[AB]", sim == "ld") 
+
+mean(sub2$dat)# mean of simulation means = 0.6
+true         # true E_AB under ld = 0.5
+
+0.1/0.5 # 20% bias
+
+unique(dat$param)
