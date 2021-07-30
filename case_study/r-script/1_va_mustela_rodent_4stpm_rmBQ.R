@@ -313,8 +313,10 @@ sink()
 ## import data
 setwd("./data") # set wd to where the data is stored
 
-load("occm_mustela_rodent_var_snowbed.rda")    
+#load("occm_mustela_rodent_var_snowbed.rda")    
 #load("case_study_data.RData")
+load("occm_mustela_rodent_var_snowbed_rmBQ.rda")
+
 yb <-occm_ko3 # change name of imported object to fit with the rest of the code
 
 dim(yb) # check that dimensions are ok
@@ -375,11 +377,11 @@ ni <- 100000   ;   nt <- 20   ;   nb <- 25000   ;   nc <- 4    ;   na <- 25000
 # run model in jags
 setwd("../")
 
-va_snowbed_mustela_rodent_sdet_4stpm_ni100k_4 <- jags(data, inits=inits, params, "mod_seas_det_4stpm.txt", n.chains = nc,
+va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ <- jags(data, inits=inits, params, "mod_seas_det_4stpm.txt", n.chains = nc,
                                                      n.thin = nt, n.iter = ni, n.burnin = nb, n.adapt=na, parallel = T)
 
 # Save model
 setwd("./model_output")
-save(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_4, file="va_snowbed_mustela_rodent_sdet_4stpm_ni100k_4.rda")
+save(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ, file="va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rm_BQ.rda")
 
 #~ End of script

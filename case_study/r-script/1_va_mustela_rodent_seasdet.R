@@ -203,14 +203,14 @@ sink()
 ## import data
 setwd("./data") # set wd to where the data is stored
 
-load("occm_mustela_rodent_var_snowbed.rda")    
-
+#load("occm_mustela_rodent_var_snowbed.rda")    
+load("case_study_data.RData")
 yb <-occm_ko3 # change name of imported object to fit with the rest of the code
 
 dim(yb) # check that dimensions are ok
 
 #load cov
-load("season.rda") 
+#load("season.rda") 
 season <- season[1:203]
 
 # give data
