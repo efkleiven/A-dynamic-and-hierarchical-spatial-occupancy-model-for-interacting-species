@@ -11,6 +11,7 @@
 rm(list=ls())
 
 library(jagsUI)
+library(runjags)
 
 # set working directory
 #setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel")
@@ -236,25 +237,37 @@ cat("
     stpm[3, 4, 4] <- epsAB * (1-epsBA)      #--|B
     stpm[4, 4, 4] <- (1-epsAB) * (1-epsBA)  #--|AB
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-    # latent block state for the rest of the seasons
-    for(t in 1:(nseason-1)){
-      for(b in 1:nblock){
-        x[b, t+1] ~ dcat(btpm[(1:nout), x[b, t]])
-
-      # latent site state for the rest of the seasons
-      for(j in 1:nsite){
-        z[j, b, t+1] ~ dcat( stpm[( 1:nout ) , z[ j, b, t], x[b,t+1]] + 0.01)  # +0.01 to avoide giving the dcat a prob of 0 
-      } # end site loop
-      } # end block loop
-    } #close time loop
     
-          for(i in 1:nvisits) {      
-            y[i] ~ dcat( dpm[time_id, ( 1:nout ) , z[site_id[i], block_id[i], time_id[i]]] + 0.01)  # +0.01 to avoide giving the dcat a prob of 0 
+          for(i in 1:nvisits) {
+          
+            y[i] ~ dcat( dpm[time_id[i], ( 1:nout ) , z[site_id[i], block_id[i], time_id[i]]] + 0.01)  # +0.01 to avoide giving the dcat a prob of 0 
+          
+           #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           # Draw a replicate data set under the fitted model
+   
+              yrep[i] ~ dcat(dpm[time_id[i], , z[site_id[i], block_id[i], time_id[i]]] + 0.01)
+
+             y2[(block_id[i]-1)*6+site_id[i],time_id[i], day_id[i]] <- yb[site_id[i],block_id[i],time_id[i],day_id[i]]
+            yrep2[(block_id[i]-1)*6+site_id[i],time_id[i],day_id[i]] <- yrep[i]
+            
+           
+          #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          
           } #end nvisit loop
-
-
+          
+  # latent site state for the rest of the seasons
+  for(q in 1:length(uniq_site1_t0)){
+    z[uniq_site1_t0[q], uniq_block1_t0[q], uniq_time1_t0[q]+1] ~ dcat( stpm[( 1:nout ) , z[ uniq_site1_t0[q], uniq_block1_t0[q], uniq_time1_t0[q]], x[uniq_block1_t0[q], uniq_time1_t0[q]+1]] + 0.01)  # +0.01 to avoide giving the dcat a prob of 0 
     
+    # remove block structure from z
+    z2[(uniq_block1_t0[q]-1)*6+uniq_site1_t0[q], uniq_time1_t0[q]] <- z[uniq_site1_t0[q], uniq_block1_t0[q], uniq_time1_t0[q]] 
+    } # end uniq1 loop
+  
+  for(w in 1:length(uniq_block2_t0)){
+    # latent block state for the rest of the seasons 
+    x[uniq_block2_t0[w], uniq_time2_t0[w]+1] ~ dcat(btpm[(1:nout), x[uniq_block2_t0[w], uniq_time2_t0[w]]])
+  }
+  
     #############################################################
     ## detection matrix (OS = observed state, TS = true state) ##
     #############################################################
@@ -315,37 +328,12 @@ cat("
   # (2) GoF computation part of code
   # (based on posterior predictive distributions)
   # --------------------------------------------
-  # Draw a replicate data set under the fitted model
-   
-     for(t in 1:nseason){
-      for(b in 1:nblock){
-        for(j in 1:nsite){
-           for(day in 1:nsurvey){
-
-              yrep[j, b, t, day] ~ dcat(dpm[t, , z[j, b, t]] + 0.01)
-
-           } # end survey loop
-          } # end site loop
-        } # end block loop
-      } # end survey loop
+ 
+           
       
   # (2a) Computations for the GoF of the open part of the model
   # (based on number of state transitions)
   # ----------------------------------------------------------
-  
-  for(t in 1:nseason){
-    for(b in 1:nblock){
-      for(j in 1:nsite){
-         for(day in 1:nsurvey) {  
-          y2[(b-1)*6+j,t, day] <- yb[j,b,t,day]
-          yrep2[(b-1)*6+j ,t,day] <- yrep[j, b, t, day]
-          } # end survey loop
-
-          z2[(b-1)*6+j, t] <- z[j, b, t]         
-        } # end site loop
-      } # end block loop
-    } # end time loop
-
 
 # seperate species
   yrep_22 <- yrep2==2       # select data point where status 2 (only A observed)
@@ -373,55 +361,108 @@ cat("
   y_3 <- y_33*1      # make numeric
 
  y_B <- y_3+y_4 
+ 
+  # remove block structure
+  # first we need to calculate the occupancy of each species at each time step. 
+   z_22 <- z2==2
+   z_2 <- z_22*1 # make numeric
+  
+   z_44 <- z2==4
+   z_4 <- z_44*1 # make numeric
+  
+   z_33 <- z2==3
+   z_3 <- z_33*1 # make numeric
+  
+   z_A <- z_2+z_4
+   z_B <- z_3+z_4
   
   # Compute observed z matrix for observed and replicated data
- for(t in 1:nseason){
-    for(b in 1:nblock){
-      for(j in 1:nsite){
-      
-        zobs_A[(b-1)*6+j,t] <- max(y_A[(b-1)*6+j,t,]) 
-        zobsrep_A[(b-1)*6+j,t] <- max(yrep_A[(b-1)*6+j,t,]) # For replicated data
+for(q1 in 1:length(uniq_site1_t1)){
+        zobs_A[(uniq_block1_t1[q1]-1)*6+uniq_site1_t1[q1],uniq_time1_t1[q1]] <- max(y_A[(uniq_block1_t1[q1]-1)*6+uniq_site1_t1[q1],uniq_time1_t1[q1],]) 
+        zobsrep_A[(uniq_block1_t1[q1]-1)*6+uniq_site1_t1[q1],uniq_time1_t1[q1]] <- max(yrep_A[(uniq_block1_t1[q1]-1)*6+uniq_site1_t1[q1],uniq_time1_t1[q1],]) # For replicated data
        
-        zobs_B[(b-1)*6+j,t] <- max(y_B[(b-1)*6+j,t,])       # For observed data
-        zobsrep_B[(b-1)*6+j,t] <- max(yrep_B[(b-1)*6+j,t,]) # For replicated data
-        } # end site loop
-      } # end block loop
-    } # end time loop
+        zobs_B[(uniq_block1_t1[q1]-1)*6+uniq_site1_t1[q1],uniq_time1_t1[q1]] <- max(y_B[(uniq_block1_t1[q1]-1)*6+uniq_site1_t1[q1],uniq_time1_t1[q1],])       # For observed data
+        zobsrep_B[(uniq_block1_t1[q1]-1)*6+uniq_site1_t1[q1],uniq_time1_t1[q1]] <- max(yrep_B[(uniq_block1_t1[q1]-1)*6+uniq_site1_t1[q1],uniq_time1_t1[q1],]) # For replicated data
+}
         
     # Identify extinctions, persistence, colonization and non-colonizations
     
-  for (t in 2:nseason){
-    for(b in 1:nblock){
-      for(j in 1:nsite){ 
-      
+for(q2 in 1:length(uniq_site1_t0)){
       # ... for observed data
-      ext_A[(b-1)*6+j,t-1] <- equals(zobs_A[(b-1)*6+j,t],0) * equals(zobs_A[(b-1)*6+j,t-1],1)
-      nonext_A[(b-1)*6+j,(t-1)] <- equals(zobs_A[(b-1)*6+j,t],1) * equals(zobs_A[(b-1)*6+j,t-1],1)
-      colo_A[(b-1)*6+j,(t-1)] <- equals(zobs_A[(b-1)*6+j,t],1) * equals(zobs_A[(b-1)*6+j,t-1],0)
-      noncolo_A[(b-1)*6+j,(t-1)] <- equals(zobs_A[(b-1)*6+j,t],0) * equals(zobs_A[(b-1)*6+j,t-1],0)
+      ext_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
+      nonext_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
+      colo_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
+      noncolo_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
       
-      ext_B[(b-1)*6+j,(t-1)] <- equals(zobs_B[(b-1)*6+j,t],0) * equals(zobs_B[(b-1)*6+j,t-1],1)
-      nonext_B[(b-1)*6+j,(t-1)] <- equals(zobs_B[(b-1)*6+j,t],1) * equals(zobs_B[(b-1)*6+j,t-1],1)
-      colo_B[(b-1)*6+j,(t-1)] <- equals(zobs_B[(b-1)*6+j,t],1) * equals(zobs_B[(b-1)*6+j,t-1],0)
-      noncolo_B[(b-1)*6+j,(t-1)] <- equals(zobs_B[(b-1)*6+j,t],0) * equals(zobs_B[(b-1)*6+j,t-1],0)
+      ext_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
+      nonext_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
+      colo_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
+      noncolo_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
     
       # ... for replicated data
-      extrep_A[(b-1)*6+j,(t-1)] <- equals(zobsrep_A[(b-1)*6+j,t],0) * equals(zobsrep_A[(b-1)*6+j,t-1],1)
-      nonextrep_A[(b-1)*6+j,(t-1)] <- equals(zobsrep_A[(b-1)*6+j,t],1) * equals(zobsrep_A[(b-1)*6+j,t-1],1)
-      colorep_A[(b-1)*6+j,(t-1)] <- equals(zobsrep_A[(b-1)*6+j,t],1) * equals(zobsrep_A[(b-1)*6+j,t-1],0)
-      noncolorep_A[(b-1)*6+j,(t-1)] <- equals(zobsrep_A[(b-1)*6+j,t],0)*equals(zobsrep_A[(b-1)*6+j,t-1],0)
+      extrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
+      nonextrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
+      colorep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
+      noncolorep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0)*equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
       
-      extrep_B[(b-1)*6+j,(t-1)] <- equals(zobsrep_B[(b-1)*6+j,t],0) * equals(zobsrep_B[(b-1)*6+j,t-1],1)
-      nonextrep_B[(b-1)*6+j,(t-1)] <- equals(zobsrep_B[(b-1)*6+j,t],1) * equals(zobsrep_B[(b-1)*6+j,t-1],1)
-      colorep_B[(b-1)*6+j,(t-1)] <- equals(zobsrep_B[(b-1)*6+j,t],1) * equals(zobsrep_B[(b-1)*6+j,t-1],0)
-      noncolorep_B[(b-1)*6+j,(t-1)] <- equals(zobsrep_B[(b-1)*6+j,t],0)*equals(zobsrep_B[(b-1)*6+j,t-1],0)
-        } # end site loop
-      } # end block loop
-    } # end time loop
+      extrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
+      nonextrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
+      colorep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
+      noncolorep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0)*equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
+
+        # Probability of each individual transition
+     
+      noncolo.exp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 1-z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-gamAB), 1-z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-gamA))
+      colo.exp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, (1-z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) * gamAB, 1-z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * gamA) 
+      ext.exp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * epsAB, z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * epsA)
+      nonext.exp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-epsAB), z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-epsA))
     
-    # Tally up number of transitions and put into a matrix for each year
+      noncolo.exp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 1-z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-gamBA), 1-z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-gamB))
+      colo.exp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, (1-z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) * gamBA, 1-z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * gamB) 
+      ext.exp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * epsBA, z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * epsB)
+      nonext.exp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-epsBA), z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-epsB))
+       
+     # Det. frequencies for observed and replicated data
+      detfreq_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- sum(y_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2],])
+      detfreqrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- sum(yrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2],])
+
+      detfreq_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- sum(y_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2],])
+      detfreqrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- sum(yrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2],])
+      
+      # Expected detection frequencies under the model
+      for (day in 1:nsurvey){
+        tmp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],day,uniq_time1_t0[q2]] <- z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2], uniq_time1_t0[q2]] * pA[uniq_time1_t0[q2]]
+        tmp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],day,uniq_time1_t0[q2]] <- z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2], uniq_time1_t0[q2]] * pB[uniq_time1_t0[q2]]
+      }
+      
+      E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- sum(tmp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],,uniq_time1_t0[q2]])     # Expected number of detections for A
+      E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- sum(tmp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],,uniq_time1_t0[q2]])     # Expected number of detections for B
+      
+      # Chi-square and Freeman-Tukey discrepancy measures
+      # ..... for actual data setuniq_block1_t0[q2]
+      x2Closed_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((detfreq_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] - E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]),2) / (E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] + e)
+      #ftClosed_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((sqrt(detfreq_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) - sqrt(E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]])),2)
+      
+      x2Closed_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((detfreq_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] - E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]),2) / (E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] + e)
+      #ftClosed_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((sqrt(detfreq_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) - sqrt(E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]])),2)
+      
+      # ..... for replicated data set
+      x2repClosed_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((detfreqrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] - E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]),2) / (E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] + e)
+      #ftrepClosed_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((sqrt(detfreqrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) - sqrt(E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]])),2)
+      
+      x2repClosed_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((detfreqrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] - E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]),2) / (E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] + e)
+      #ftrepClosed_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((sqrt(detfreqrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) - sqrt(E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]])),2)
+}
+ 
+  # calculate occupancy
+ # for(t in 1:nseason){
+#  occA[t] <- mean(z_A[,t])
+#  occB[t] <- mean(z_B[,t])}
+  
+  for(t in 1:(nseason-1)){
+  
+      # Tally up number of transitions and put into a matrix for each year
     
-     for(t in 1:(nseason-1)){
       # ... for observed data
       tm_A[1,1,t] <- sum(noncolo_A[,t]) # transition mat for obs. data
       tm_A[1,2,t] <- sum(colo_A[,t])
@@ -438,53 +479,12 @@ cat("
       tmrep_A[1,2,t] <- sum(colorep_A[,t])
       tmrep_A[2,1,t] <- sum(extrep_A[,t])
       tmrep_A[2,2,t] <- sum(nonextrep_A[,t])
-      
+    
       tmrep_B[1,1,t] <- sum(noncolorep_B[,t]) # transition mat for rep. data
       tmrep_B[1,2,t] <- sum(colorep_B[,t])
       tmrep_B[2,1,t] <- sum(extrep_B[,t])
       tmrep_B[2,2,t] <- sum(nonextrep_B[,t])
-     }
-    
-  # Compute expected numbers of transitions under the model
   
-  
-  # remove block structure
-  # first we need to calculate the occupancy of each species at each time step. 
-   z_22 <- z2==2
-   z_2 <- z_22*1 # make numeric
-  
-   z_44 <- z2==4
-   z_4 <- z_44*1 # make numeric
-  
-   z_33 <- z2==3
-   z_3 <- z_33*1 # make numeric
-  
-   z_A <- z_2+z_4
-   z_B <- z_3+z_4
-  
-  # calculate occupancy
-  for(t in 1:nseason){
-  occA[t] <- mean(z_A[,t])
-  occB[t] <- mean(z_B[,t])}
-  
-  # Probability of each individual transition
-  for(j in 1:nsite){
-    for(b in 1:nblock){
-     for(t in 1:(nseason-1)){
-    noncolo.exp_A[(b-1)*6+j,t] <- ifelse(z_B[(b-1)*6+j,t]==1, 1-z_A[(b-1)*6+j,t] * (1-gamAB), 1-z_A[(b-1)*6+j,t] * (1-gamA))
-    colo.exp_A[(b-1)*6+j,t] <- ifelse(z_B[(b-1)*6+j,t]==1, (1-z_A[(b-1)*6+j,t]) * gamAB, 1-z_A[(b-1)*6+j,t] * gamA) 
-    ext.exp_A[(b-1)*6+j,t] <- ifelse(z_B[(b-1)*6+j,t]==1, z_A[(b-1)*6+j,t] * epsAB, z_A[(b-1)*6+j,t] * epsA)
-    nonext.exp_A[(b-1)*6+j,t] <- ifelse(z_B[(b-1)*6+j,t]==1, z_A[(b-1)*6+j,t] * (1-epsAB), z_A[(b-1)*6+j,t] * (1-epsA))
-    
-    noncolo.exp_B[(b-1)*6+j,t] <- ifelse(z_A[(b-1)*6+j,t]==1, 1-z_B[(b-1)*6+j,t] * (1-gamBA), 1-z_B[(b-1)*6+j,t] * (1-gamB))
-    colo.exp_B[(b-1)*6+j,t] <- ifelse(z_A[(b-1)*6+j,t]==1, (1-z_B[(b-1)*6+j,t]) * gamBA, 1-z_B[(b-1)*6+j,t] * gamB) 
-    ext.exp_B[(b-1)*6+j,t] <- ifelse(z_A[(b-1)*6+j,t]==1, z_B[(b-1)*6+j,t] * epsBA, z_B[(b-1)*6+j,t] * epsB)
-    nonext.exp_B[(b-1)*6+j,t] <- ifelse(z_A[(b-1)*6+j,t]==1, z_B[(b-1)*6+j,t] * (1-epsBA), z_B[(b-1)*6+j,t] * (1-epsB))
-   } # end season loop
-   } # end block loop 
-  } # end site loop
-  
-  for(t in 1:(nseason-1)){
     Etm_A[1,1,t] <- sum(noncolo.exp_A[,t])
     Etm_A[1,2,t] <- sum(colo.exp_A[,t])
     Etm_A[2,1,t] <- sum(ext.exp_A[,t])
@@ -494,10 +494,9 @@ cat("
     Etm_B[1,2,t] <- sum(colo.exp_B[,t])
     Etm_B[2,1,t] <- sum(ext.exp_B[,t])
     Etm_B[2,2,t] <- sum(nonext.exp_B[,t])
-  }
-  
+   
   # Compute Chi-square discrepancy
-  for(t in 1:(nseason-1)){
+
     # ... for observed data
     x2Open_A[1,1,t] <- pow((tm_A[1,1,t] - Etm_A[1,1,t]), 2) / (tm_A[1,1,t]+e)
     x2Open_A[1,2,t] <- pow((tm_A[1,2,t] - Etm_A[1,2,t]), 2) / (tm_A[1,2,t]+e)
@@ -510,9 +509,9 @@ cat("
     x2Open_B[2,2,t] <- pow((tm_B[2,2,t] - Etm_B[2,2,t]), 2) / (tm_B[2,2,t]+e)
     
     # ... for replicated data
-   x2repOpen_A[1,1,t] <- pow((tmrep_A[1,1,t]-Etm_A[1,1,t]),2)/(tmrep_A[1,1,t]+e)
+    x2repOpen_A[1,1,t] <- pow((tmrep_A[1,1,t]-Etm_A[1,1,t]),2)/(tmrep_A[1,1,t]+e)
     x2repOpen_A[1,2,t] <- pow((tmrep_A[1,2,t]-Etm_A[1,2,t]),2)/(tmrep_A[1,2,t]+e)
-   x2repOpen_A[2,1,t] <- pow((tmrep_A[2,1,t]-Etm_A[2,1,t]),2)/(tmrep_A[2,1,t]+e)
+    x2repOpen_A[2,1,t] <- pow((tmrep_A[2,1,t]-Etm_A[2,1,t]),2)/(tmrep_A[2,1,t]+e)
     x2repOpen_A[2,2,t] <- pow((tmrep_A[2,2,t]-Etm_A[2,2,t]),2)/(tmrep_A[2,2,t]+e)
     
     x2repOpen_B[1,1,t] <- pow((tmrep_B[1,1,t]-Etm_B[1,1,t]),2)/(tmrep_B[1,1,t]+e)
@@ -521,9 +520,7 @@ cat("
     x2repOpen_B[2,2,t] <- pow((tmrep_B[2,2,t]-Etm_B[2,2,t]),2)/(tmrep_B[2,2,t]+e)
   }
   
-  
   # Add up overall test statistic and compute fit stat ratio (open part)
-  
   Chi2Open_A <- sum(x2Open_A[,,])       # Chisq. statistic for observed data
   Chi2repOpen_A <- sum(x2repOpen_A[,,]) # Chisq. statistic for replicated data
   Chi2ratioOpen_A <- Chi2Open_A / Chi2repOpen_A
@@ -532,62 +529,20 @@ cat("
   Chi2repOpen_B <- sum(x2repOpen_B[,,]) # Chisq. statistic for replicated data
   Chi2ratioOpen_B <- Chi2Open_B / Chi2repOpen_B
   
-  # (2b) Computations for the GoF of the closed part of the model
-  # (based on the number of times detected, i.e., detection freqiencies)
-  # --------------------------------------------------------------------
-  # Compute detection frequencies for observed and replicated data
-
-  for (j in 1:nsite){
-    for(b in 1:nblock){
-    for (t in 1:(nseason-1)){
-      # Det. frequencies for observed and replicated data
-      detfreq_A[(b-1)*6+j,t] <- sum(y_A[(b-1)*6+j,t,])
-      detfreqrep_A[(b-1)*6+j,t] <- sum(yrep_A[(b-1)*6+j,t,])
-
-      detfreq_B[(b-1)*6+j,t] <- sum(y_B[(b-1)*6+j,t,])
-      detfreqrep_B[(b-1)*6+j,t] <- sum(yrep_B[(b-1)*6+j,t,])
-      
-      # Expected detection frequencies under the model
-      for (day in 1:nsurvey){
-        tmp_A[(b-1)*6+j,day,t] <- z_A[(b-1)*6+j, t] * pA[t]
-        tmp_B[(b-1)*6+j,day,t] <- z_B[(b-1)*6+j, t] * pB[t]
-      }
-      
-      E_A[(b-1)*6+j,t] <- sum(tmp_A[(b-1)*6+j,,t])     # Expected number of detections for A
-      E_B[(b-1)*6+j,t] <- sum(tmp_B[(b-1)*6+j,,t])     # Expected number of detections for B
-      
-      # Chi-square and Freeman-Tukey discrepancy measures
-      # ..... for actual data set
-      x2Closed_A[(b-1)*6+j,t] <- pow((detfreq_A[(b-1)*6+j,t] - E_A[(b-1)*6+j,t]),2) / (E_A[(b-1)*6+j,t] + e)
-      ftClosed_A[(b-1)*6+j,t] <- pow((sqrt(detfreq_A[(b-1)*6+j,t]) - sqrt(E_A[(b-1)*6+j,t])),2)
-      
-      x2Closed_B[(b-1)*6+j,t] <- pow((detfreq_B[(b-1)*6+j,t] - E_B[(b-1)*6+j,t]),2) / (E_B[(b-1)*6+j,t] + e)
-      ftClosed_B[(b-1)*6+j,t] <- pow((sqrt(detfreq_B[(b-1)*6+j,t]) - sqrt(E_B[(b-1)*6+j,t])),2)
-      
-      # ..... for replicated data set
-      x2repClosed_A[(b-1)*6+j,t] <- pow((detfreqrep_A[(b-1)*6+j,t] - E_A[(b-1)*6+j,t]),2) / (E_A[(b-1)*6+j,t] + e)
-      ftrepClosed_A[(b-1)*6+j,t] <- pow((sqrt(detfreqrep_A[(b-1)*6+j,t]) - sqrt(E_A[(b-1)*6+j,t])),2)
-      
-      x2repClosed_B[(b-1)*6+j,t] <- pow((detfreqrep_B[(b-1)*6+j,t] - E_B[(b-1)*6+j,t]),2) / (E_B[(b-1)*6+j,t] + e)
-      ftrepClosed_B[(b-1)*6+j,t] <- pow((sqrt(detfreqrep_B[(b-1)*6+j,t]) - sqrt(E_B[(b-1)*6+j,t])),2)
-    } # end season loop
-    } # end block loop
-  } # end site loop
-  
   # Add up Chi-square and FT discrepancies and compute fit stat ratio (closed part)
   Chi2Closed_A      <- sum(x2Closed_A[,])
-  FTClosed_A        <- sum(ftClosed_A[,])
+  #FTClosed_A        <- sum(ftClosed_A[,])
   Chi2repClosed_A   <- sum(x2repClosed_A[,])
-  FTrepClosed_A     <- sum(ftrepClosed_A[,])
+  #FTrepClosed_A     <- sum(ftrepClosed_A[,])
   Chi2ratioClosed_A <- Chi2Closed_A / Chi2repClosed_A
-  FTratioClosed_A   <- FTClosed_A / FTrepClosed_A
+  #FTratioClosed_A   <- FTClosed_A / FTrepClosed_A
   
   Chi2Closed_B      <- sum(x2Closed_B[,])
-  FTClosed_B        <- sum(ftClosed_B[,])
+  #FTClosed_B        <- sum(ftClosed_B[,])
   Chi2repClosed_B   <- sum(x2repClosed_B[,])
-  FTrepClosed_B     <- sum(ftrepClosed_B[,])
+  #FTrepClosed_B     <- sum(ftrepClosed_B[,])
   Chi2ratioClosed_B <- Chi2Closed_B / Chi2repClosed_B
-  FTratioClosed_B   <- FTClosed_B / FTrepClosed_B
+  #FTratioClosed_B   <- FTClosed_B / FTrepClosed_B
   
     }# end
     ",fill = TRUE)
@@ -600,8 +555,7 @@ setwd("./data") # set wd to where the data is stored
 #load("case_study_data.RData")
 load("occm_mustela_rodent_var_snowbed_rmBQ.rda")
 
-yb <-occm_ko3[,,170:173,] # change name of imported object to fit with the rest of the code
-#yb <-occm_ko3[,,1:4,] # change name of imported object to fit with the rest of the code
+yb <-occm_ko3 # change name of imported object to fit with the rest of the code
 
 #replace NA's with 0's 
 yb[is.na(yb)] <- 1
@@ -618,16 +572,39 @@ has_data <- which(
 time_id <- has_data[,3]
 site_id <- has_data[,1]
 block_id <- has_data[,2]
+day_id <- has_data[,4]
+
+#head(has_data)
+#uniqe_sitetime<- unique(has_data[,c('dim1','dim2','dim3')])
 
 # make table with unique block, site and time combinations
-dat <- tibble::as.tibble(cbind(site_id, block_id, time_id))
+dat <- tibble::as_tibble(cbind(site_id, block_id, time_id))
 uniq_site_block_time <- dplyr::distinct(dat)
 
-uniq_site <- dplyr::pull(uniq_site_block_time,1)
-uniq_block <- dplyr::pull(uniq_site_block_time,2) 
-uniq_time <- dplyr::pull(uniq_site_block_time,3) 
+# making vectors with indexes for site, block and time, with full time span
+uniq_site1_t1 <- dplyr::pull(uniq_site_block_time,1)
+uniq_block1_t1 <- dplyr::pull(uniq_site_block_time,2) 
+uniq_time1_t1 <- dplyr::pull(uniq_site_block_time,3) 
 
-n_unique <- length(uniq_site)
+# remove the last primary occasion, as we would need to have t+1 in the loop in the jags model
+uniq_site_block_time_t0 <- dplyr::filter(uniq_site_block_time, !time_id==max(uniq_site_block_time$time_id))
+
+# making vectors with indexes for site, block and time, without last primary occasion
+uniq_site1_t0 <- dplyr::pull(uniq_site_block_time_t0,1)
+uniq_block1_t0 <- dplyr::pull(uniq_site_block_time_t0,2) 
+uniq_time1_t0 <- dplyr::pull(uniq_site_block_time_t0,3) 
+
+# making indexes for uniqe block and time combinations
+dat2 <- tibble::as_tibble(cbind(block_id, time_id))
+uniq_block_time_t1 <- dplyr::distinct(dat2)
+
+uniq_block2_t1 <- dplyr::pull(uniq_block_time_t1,1) 
+uniq_time2_t1 <- dplyr::pull(uniq_block_time_t1,2) 
+# remove the last primary occasion, as we would need to have t+1 in the loop in the jags model
+uniq_block_time_t0 <- dplyr::filter(uniq_block_time_t1, !time_id==max(uniq_block_time_t1$time_id))
+
+uniq_block2_t0 <- dplyr::pull(uniq_block_time_t0,1) 
+uniq_time2_t0 <- dplyr::pull(uniq_block_time_t0,2) 
 
 y_long <- yb[!is.na(yb)]
 
@@ -635,14 +612,18 @@ nvisits = length(y_long)
 
 #load cov
 load("season.rda") 
-season <- season[170:173]
+season <- season
 season[season==1] <- 2
 season[season==0] <- 1
 
 # give data
 data <-list(nseason = dim(yb)[3], nblock = dim(yb)[2], nsite = dim(yb)[1], nsurvey = dim(yb)[4], 
             nout=4, y = y_long, season = season, e = 0.0001, nvisits=nvisits, yb=yb,
-            time_id=time_id, block_id=block_id, site_id=site_id)
+            time_id=time_id, block_id=block_id, site_id=site_id, day_id=day_id,
+            uniq_site1_t0=uniq_site1_t0, uniq_block1_t0=uniq_block1_t0, uniq_time1_t0=uniq_time1_t0,
+            uniq_site1_t1=uniq_site1_t1, uniq_block1_t1=uniq_block1_t1, uniq_time1_t1=uniq_time1_t1,
+            uniq_block2_t0=uniq_block2_t0, uniq_time2_t0=uniq_time2_t0,
+            uniq_block2_t1=uniq_block2_t1, uniq_time2_t1=uniq_time2_t1)
 
 # naming some parameters for loops further down in this script
 nseason = dim(yb)[3]; nblock = dim(yb)[2]; nsite = dim(yb)[1]; nsurvey = dim(yb)[4]
@@ -684,22 +665,25 @@ params <- c("gamA","gamB","gamAB","gamBA","epsA","epsB","epsAB","epsBA","psi",
             "diff_gamA", "diff_gamB", "diff_epsA", "diff_epsB", "diff_GamA", "diff_GamB", "diff_EpsA", "diff_EpsB",
             "ratio_gamA", "ratio_gamB", "ratio_epsA", "ratio_epsB", "ratio_GamA", "ratio_GamB", "ratio_EpsA", "ratio_EpsB",
             'Chi2Open_A', 'Chi2repOpen_A','Chi2ratioOpen_A', 'Chi2Closed_A', 'Chi2repClosed_A', 'Chi2ratioClosed_A',
-            'FTClosed_A', 'FTrepClosed_A', 'FTratioClosed_A', 'tm_A', 'tmrep_A', 'Etm_A', 
+            'tm_A', 'tmrep_A', 'Etm_A', 
             'Chi2Open_B', 'Chi2repOpen_B','Chi2ratioOpen_B', 'Chi2Closed_B', 'Chi2repClosed_B', 'Chi2ratioClosed_B',
-            'FTClosed_B', 'FTrepClosed_B', 'FTratioClosed_B', 'tm_B', 'tmrep_B', 'Etm_B')
+            'tm_B', 'tmrep_B', 'Etm_B')
 
+#'FTClosed_B', 'FTrepClosed_B', 'FTratioClosed_B','FTClosed_A', 'FTrepClosed_A', 'FTratioClosed_A',
 # MCMC settings
-ni <- 5   ;   nt <- 1   ;   nb <- 0   ;   nc <- 1    ;   na <- 0
+ni <- 25000   ;   nt <- 10   ;   nb <- 5000   ;   nc <- 4    ;   na <- 10000
 #ni <- 100000   ;   nt <- 20   ;   nb <- 25000   ;   nc <- 4    ;   na <- 25000
 
 # run model in jags
 setwd("../")
 
-va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ <- jags(data, inits=inits, params, "mod_spatial_dynocc_bayp.txt", n.chains = nc,
-                                                     n.thin = nt, n.iter = ni, n.burnin = nb, n.adapt=na, parallel = T)
+#ptm2 <- proc.time()
+out.gof <- run.jags("mod_spatial_dynocc_bayp.txt", data=data, inits=inits, monito=params,  n.chains = nc,
+                    thin = nt, sample = ni, burnin = nb, adapt=na, method='parallel')
+#proc.time() - ptm2                
 
 # Save model
-#setwd("./model_output")
-#save(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ, file="va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rm_BQ.rda")
+setwd("./model_output")
+save(out.gof, file="va_snowbed_mustela_rodent_outgof_rj_ni25k.rda")
 
 #~ End of script

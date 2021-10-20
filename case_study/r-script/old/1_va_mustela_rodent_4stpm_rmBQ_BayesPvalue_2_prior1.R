@@ -510,9 +510,9 @@ cat("
     x2Open_B[2,2,t] <- pow((tm_B[2,2,t] - Etm_B[2,2,t]), 2) / (tm_B[2,2,t]+e)
     
     # ... for replicated data
-   x2repOpen_A[1,1,t] <- pow((tmrep_A[1,1,t]-Etm_A[1,1,t]),2)/(tmrep_A[1,1,t]+e)
+    x2repOpen_A[1,1,t] <- pow((tmrep_A[1,1,t]-Etm_A[1,1,t]),2)/(tmrep_A[1,1,t]+e)
     x2repOpen_A[1,2,t] <- pow((tmrep_A[1,2,t]-Etm_A[1,2,t]),2)/(tmrep_A[1,2,t]+e)
-   x2repOpen_A[2,1,t] <- pow((tmrep_A[2,1,t]-Etm_A[2,1,t]),2)/(tmrep_A[2,1,t]+e)
+    x2repOpen_A[2,1,t] <- pow((tmrep_A[2,1,t]-Etm_A[2,1,t]),2)/(tmrep_A[2,1,t]+e)
     x2repOpen_A[2,2,t] <- pow((tmrep_A[2,2,t]-Etm_A[2,2,t]),2)/(tmrep_A[2,2,t]+e)
     
     x2repOpen_B[1,1,t] <- pow((tmrep_B[1,1,t]-Etm_B[1,1,t]),2)/(tmrep_B[1,1,t]+e)
@@ -600,7 +600,7 @@ setwd("./data") # set wd to where the data is stored
 #load("case_study_data.RData")
 load("occm_mustela_rodent_var_snowbed_rmBQ.rda")
 
-yb <-occm_ko3 # change name of imported object to fit with the rest of the code
+yb <-occm_ko3[,,100:190,] # change name of imported object to fit with the rest of the code
 
 #replace NA's with 0's 
 yb[is.na(yb)] <- 1
@@ -634,7 +634,7 @@ nvisits = length(y_long)
 
 #load cov
 load("season.rda") 
-season <- season
+season <- season[100:190]
 season[season==1] <- 2
 season[season==0] <- 1
 
@@ -689,8 +689,8 @@ params <- c("gamA","gamB","gamAB","gamBA","epsA","epsB","epsAB","epsBA","psi",
 
 # MCMC settings
 #ni <- 5   ;   nt <- 1   ;   nb <- 0   ;   nc <- 1    ;   na <- 0
-ni <- 100000   ;   nt <- 20   ;   nb <- 25000   ;   nc <- 4    ;   na <- 25000
-
+#ni <- 100000   ;   nt <- 20   ;   nb <- 25000   ;   nc <- 4    ;   na <- 25000
+ni <- 1000   ;   nt <- 10   ;   nb <- 100   ;   nc <- 3    ;   na <- 200
 # run model in jags
 setwd("../")
 
@@ -699,6 +699,6 @@ out.gof <- jags(data, inits=inits, params, "mod_spatial_dynocc_bayp.txt", n.chai
 
 # Save model
 setwd("./model_output")
-save(out.gof, file="va_snowbed_mustela_rodent_outgof.rda")
+save(out.gof, file="va_snowbed_mustela_rodent_outgof_ref.rda")
 
 #~ End of script
