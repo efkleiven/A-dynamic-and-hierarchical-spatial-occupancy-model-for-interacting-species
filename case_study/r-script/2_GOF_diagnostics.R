@@ -7,10 +7,12 @@ setwd("./model_output")
 
 #import model
 dir()
-load("simdata_outgof_jagui_ni500_10.rda")
-load("simdata_outgof_jagui_ni5k_2.rda")
-load("simdata_outgof_jagui_ni2500_4.rda")
-load("simdata_outgof_jagui_ni500_9.rda")
+load("simdata_outgof.rda")
+load("simdata_outgof_001_quick.rda")
+load("simdata_outgof_00001_quick_2.rda")
+load("simdata_outgof_001.rda" )
+load("simdata_outgof_01.rda")
+load("simdata_outgof_0001.rda")
 
 # traceplots and convergence check
 traceplot(out.gof, parameters=c("pA", "pB"))
@@ -22,14 +24,18 @@ max(out.gof$Rhat$z, na.rm=T)
 # Plots of expected versus observed value of fit stats
 # Open part
 # species A
+
+setwd("../plot")
+png(filename="GOF_sim.png")
+
 par(mfrow=c(2,2))
 pl <- range(c(out.gof$sims.list$Chi2Open_A, out.gof$sims.list$Chi2repOpen_A))
 plot(out.gof$sims.list$Chi2Open_A, out.gof$sims.list$Chi2repOpen_A,
      xlab = "Chi2 observed data", ylab = "Chi2 expected data",
      main = "Open part of model Species A ", xlim = pl, ylim = pl, frame.plot = FALSE)
 abline(0, 1, lwd = 2)
-text(450, 1430, paste('Bpv = ', round(mean(out.gof$sims.list$Chi2repOpen_A >
-                                             out.gof$sims.list$Chi2Open_A), 2)), cex = 2)
+text(980, 1330, paste('Bpv = ', round(mean(out.gof$sims.list$Chi2repOpen_A >
+                                             out.gof$sims.list$Chi2Open_A), 2)), cex = 1.3)
 
 # species B
 pl <- range(c(out.gof$sims.list$Chi2Open_B, out.gof$sims.list$Chi2repOpen_B))
@@ -37,8 +43,8 @@ plot(out.gof$sims.list$Chi2Open_B, out.gof$sims.list$Chi2repOpen_B,
      xlab = "Chi2 observed data", ylab = "Chi2 expected data",
      main = "Open part of model Species B ", xlim = pl, ylim = pl, frame.plot = FALSE)
 abline(0, 1, lwd = 2)
-text(450, 1430, paste('Bpv = ', round(mean(out.gof$sims.list$Chi2repOpen_B >
-                                             out.gof$sims.list$Chi2Open_B), 2)), cex = 2)
+text(750, 980, paste('Bpv = ', round(mean(out.gof$sims.list$Chi2repOpen_B >
+                                             out.gof$sims.list$Chi2Open_B), 2)), cex = 1.3)
 
 # Closed part of model: Chi-squared
 pl <- range(c(out.gof$sims.list$Chi2Closed_A, out.gof$sims.list$Chi2repClosed_A))
@@ -47,8 +53,8 @@ plot(out.gof$sims.list$Chi2Closed_A, out.gof$sims.list$Chi2repClosed_A,
      main = "Closed part of model Species A", xlim = pl, ylim = pl,
      frame.plot = FALSE)
 abline(0, 1, lwd = 2)
-text(525, 720, paste('Bpv = ', round(mean(out.gof$sims.list$Chi2repClosed_A >
-                                            out.gof$sims.list$Chi2Closed_A), 2)), cex = 2)
+text(100000, 20000, paste('Bpv = ', round(mean(out.gof$sims.list$Chi2repClosed_A >
+                                            out.gof$sims.list$Chi2Closed_A), 2)), cex = 1.3)
 
 # Closed part of model: Chi-squared
 pl <- range(c(out.gof$sims.list$Chi2Closed_B, out.gof$sims.list$Chi2repClosed_B))
@@ -57,28 +63,28 @@ plot(out.gof$sims.list$Chi2Closed_B, out.gof$sims.list$Chi2repClosed_B,
      main = "Closed part of model Species B", xlim = pl, ylim = pl,
      frame.plot = FALSE)
 abline(0, 1, lwd = 2)
-text(525, 720, paste('Bpv = ', round(mean(out.gof$sims.list$Chi2repClosed_B >
-                                            out.gof$sims.list$Chi2Closed_B), 2)), cex = 2)
-
+text(90000, 20000, paste('Bpv = ', round(mean(out.gof$sims.list$Chi2repClosed_B >
+                                            out.gof$sims.list$Chi2Closed_B), 2)), cex = 1.3)
+dev.off()
 
 # Closed part of model: Freeman-Tukey
-pl <- range(c(out.gof$sims.list$FTClosed_B, out.gof$sims.list$FTrepClosed_B))
-plot(out.gof$sims.list$FTClosed_B, out.gof$sims.list$FTrepClosed_B,
-     xlab = "FT observed data", ylab = "FT expected data",
-     main = "Closed part of model (Freeman-Tukey) Species B", xlim = pl, ylim = pl,
-     frame.plot = FALSE)
-abline(0, 1, lwd = 2)
-text(240, 335, paste('Bpv = ', round(mean(out.gof$sims.list$FTrepClosed_B >
-                                            out.gof$sims.list$FTClosed_B), 2)), cex = 2)
+#pl <- range(c(out.gof$sims.list$FTClosed_B, out.gof$sims.list$FTrepClosed_B))
+#plot(out.gof$sims.list$FTClosed_B, out.gof$sims.list$FTrepClosed_B,
+#     xlab = "FT observed data", ylab = "FT expected data",
+#     main = "Closed part of model (Freeman-Tukey) Species B", xlim = pl, ylim = pl,
+#     frame.plot = FALSE)
+#abline(0, 1, lwd = 2)
+#text(240, 335, paste('Bpv = ', round(mean(out.gof$sims.list$FTrepClosed_B >
+#                                            out.gof$sims.list$FTClosed_B), 2)), cex = 2)
 
-pl <- range(c(out.gof$sims.list$FTClosed_A, out.gof$sims.list$FTrepClosed_A))
-plot(out.gof$sims.list$FTClosed_A, out.gof$sims.list$FTrepClosed_A,
-     xlab = "FT observed data", ylab = "FT expected data",
-     main = "Closed part of model (Freeman-Tukey) Species A", xlim = pl, ylim = pl,
-     frame.plot = FALSE)
-abline(0, 1, lwd = 2)
-text(240, 335, paste('Bpv = ', round(mean(out.gof$sims.list$FTrepClosed_B >
-                                            out.gof$sims.list$FTClosed_B), 2)), cex = 2)
+#pl <- range(c(out.gof$sims.list$FTClosed_A, out.gof$sims.list$FTrepClosed_A))
+#plot(out.gof$sims.list$FTClosed_A, out.gof$sims.list$FTrepClosed_A,
+#     xlab = "FT observed data", ylab = "FT expected data",
+#     main = "Closed part of model (Freeman-Tukey) Species A", xlim = pl, ylim = pl,
+#     frame.plot = FALSE)
+#abline(0, 1, lwd = 2)
+#text(240, 335, paste('Bpv = ', round(mean(out.gof$sims.list$FTrepClosed_B >
+#                                            out.gof$sims.list$FTClosed_B), 2)), cex = 2)
 
 #par(op)
 
