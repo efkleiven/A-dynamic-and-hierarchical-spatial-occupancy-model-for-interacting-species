@@ -193,6 +193,10 @@ true[81:96] <- c(0.8, 0.2, 0.2,  0.7, 0.05, 0.8, 0.4, 0.2, 0.8, 0.3, 0.1, 0.7, 0
 
 true <- as.data.frame(true) # turn into df to be able to add columns
 
+# estimate mean of simulation means
+avr <- aggregate(dat$dat, by=list(dat$param, dat$sim), mean)
+std <- aggregate(dat$dat, by=list(dat$param, dat$sim), sd)
+
 # add a column describing the parameter name with greek letters
 true$param <- factor(rep(c("\u0393[A]","\u0393[B]","\u0393[AB]","\u0393[BA]",
                            "\u0395[A]","\u0395[B]","\u0395[AB]","\u0395[BA]",
@@ -207,24 +211,32 @@ true$param <- factor(rep(c("\u0393[A]","\u0393[B]","\u0393[AB]","\u0393[BA]",
 true$sim <- as.factor(c(rep("ld", times=16), rep("md", times=16), rep("hd", times=16), rep("lo", times=16), rep("mo", times=16), rep("ho", times=16)))
 
 names(true)[1] <- "dat"                       # change col name to match the other data frame(dat)
+
+# change col names for avg to match the others
+names(avr) <- c(names(true)[2],names(true)[3],names(true)[1])
+
 positions <-c("ld","md","hd", "lo","mo","ho") # spesify what order to plot the simulations
 
 ggplot(data=dat, aes(x=sim, y=dat, fill="grey"))+
   geom_violin(fill="grey")+
   geom_boxplot(width=0.4, color="black", alpha=0.4, fill="white")+
-  geom_point(data=true, color="red", shape="-", size=12)+
+  geom_point(data=avr, color="grey40", shape="-", size=20)+
+  geom_point(data=true, color="red",  shape="-", size=20, alpha=0.8)+
   labs(y="", x="")+
-  facet_wrap(~param, labeller = label_parsed, ncol=4)+
+  facet_wrap(~param, labeller = label_parsed, ncol=4)
+
   theme(strip.text = element_text(size=14,face="bold"), 
         axis.text.x = element_text( size = 14, face="bold"), 
         axis.text.y = element_text( size = 14, face="bold"),
-        legend.position = "none")+
+        legend.position = "none")
+
   scale_x_discrete(limits = positions)+
   scale_y_continuous(breaks = c(0, 0.5, 1))
 
 # save plot
-setwd("../plot")
-ggsave( "modelperformance_4stpm_sim_gameps_2.png", width = 24, height = 20,units="cm", dpi = 300)
+#setwd("../plot")
+setwd("~/UiT/GitProjects/A-dynamic-and-hierarchical-spatial-occupancy-model-for-interacting-species/simulation_study/plot")
+ggsave( "modelperformance_4stpm_sim_gameps_3.png", width = 24, height = 20,units="cm", dpi = 300)
 
 
 ###########################################################
