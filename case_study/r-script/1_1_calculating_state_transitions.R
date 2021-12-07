@@ -62,8 +62,6 @@ for(b in 1:8){
     ABAB[b,t] <- ifelse( yb3[b,t]==4 & yb3[b,t-1]==4, 1, 0)  
     }}
 
-
-
 table(UU)
 table(UA)
 table(UB)
