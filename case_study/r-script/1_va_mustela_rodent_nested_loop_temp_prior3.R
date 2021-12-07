@@ -241,7 +241,7 @@ cat("
     
           for(i in 1:nvisits) {
           
-            y[i] ~ dcat( dpm[site_id[i], block_id[i], time_id[i], ( 1:nout ) , z[site_id[i], block_id[i], time_id[i]]] + 0.005)  # +0.01 to avoide giving the dcat a prob of 0 
+            y[i] ~ dcat( dpm[site_id[i], block_id[i], time_id[i], ( 1:nout ) , z[site_id[i], block_id[i], time_id[i]]] + 0.005)  # +0.005 to avoide giving the dcat a prob of 0 
           
            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
            # Draw a replicate data set under the fitted model

@@ -243,7 +243,7 @@ cat("
     
           for(i in 1:nvisits) {
           
-            y[i] ~ dcat( dpm[site_id[i], block_id[i], time_id[i], ( 1:nout ) , z[site_id[i], block_id[i], time_id[i]]] + 0.005)  # +0.01 to avoide giving the dcat a prob of 0 
+            y[i] ~ dcat( dpm[site_id[i], block_id[i], time_id[i], ( 1:nout ) , z[site_id[i], block_id[i], time_id[i]]] + 0.005)  # +0.005 to avoide giving the dcat a prob of 0 
           
            #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
            # Draw a replicate data set under the fitted model
@@ -654,6 +654,7 @@ uniq_block_time_t1 <- dplyr::distinct(dat2)
 
 uniq_block2_t1 <- dplyr::pull(uniq_block_time_t1,1) 
 uniq_time2_t1 <- dplyr::pull(uniq_block_time_t1,2) 
+
 # remove the last primary occasion, as we would need to have t+1 in the loop in the jags model
 uniq_block_time_t0 <- dplyr::filter(uniq_block_time_t1, !time_id==max(uniq_block_time_t1$time_id))
 
@@ -727,8 +728,9 @@ data <-list(nseason = dim(yb)[3], nblock = dim(yb)[2], nsite = dim(yb)[1], nsurv
             uniq_site1_t1=uniq_site1_t1, uniq_block1_t1=uniq_block1_t1, uniq_time1_t1=uniq_time1_t1,
             uniq_block2_t0=uniq_block2_t0, uniq_time2_t0=uniq_time2_t0,
             uniq_block2_t1=uniq_block2_t1, uniq_time2_t1=uniq_time2_t1,
-            whichNA2=whichNA2)
+            uniq_block_time_t1, whichNA2=whichNA2)
 
+uniq_block_time_t1
 #yb=yb2,
 
 # naming some parameters for loops further down in this script
