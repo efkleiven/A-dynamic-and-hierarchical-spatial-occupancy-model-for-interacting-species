@@ -20,13 +20,13 @@ setwd("~/UiT/GitProjects/A-dynamic-and-hierarchical-spatial-occupancy-model-for-
 #setwd("./hidden_block_ko_fromautoclass/ko_vj/model_output")
 dir()
 
-load("va_snowbed_mustela_rodent_gof_nestedloop_temp_pri1_0005.rda")
+load("va_snowbed_mustela_rodent_gof_nestedloop_temp_pri1.rda")
 pri1 <- out.gof
 
-load("va_snowbed_mustela_rodent_gof_nestedloop_temp_pri2_0005.rda")
+load("va_snowbed_mustela_rodent_gof_nestedloop_temp_pri2.rda")
 pri2 <- out.gof
 
-load("va_snowbed_mustela_rodent_gof_nestedloop_temp_pri3_0005.rda")
+load("va_snowbed_mustela_rodent_gof_nestedloop_temp_pri3.rda")
 pri3 <- out.gof
 
 ##############################################################################
@@ -370,16 +370,16 @@ str(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$q97.5[c(10,12,11,13,14,16,1
 
 # the interaction
 
-# 90% CI's
+# 95% CRI's
 
-quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_gamA, probs=c(0.5,0.1,0.9)) 
-quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_gamB, probs=c(0.5,0.1,0.9)) 
-quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_EpsA, probs=c(0.5,0.1,0.9)) 
-quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_EpsB, probs=c(0.5,0.1,0.9))
+quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_gamA, probs=c(0.5,0.05,0.95)) 
+quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_gamB, probs=c(0.5,0.05,0.95)) 
+quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_EpsA, probs=c(0.5,0.05,0.95)) 
+quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_EpsB, probs=c(0.5,0.05,0.95))
 
-quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_GamA, probs=c(0.5,0.1,0.9)) 
-quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_GamB, probs=c(0.5,0.1,0.9)) 
-quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_EpsA, probs=c(0.5,0.1,0.9)) 
-quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_EpsB, probs=c(0.5,0.1,0.9))
+quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_GamA, probs=c(0.5,0.05,0.95)) 
+quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_GamB, probs=c(0.5,0.05,0.95)) 
+quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_EpsA, probs=c(0.5,0.05,0.95)) 
+quantile(va_snowbed_mustela_rodent_sdet_4stpm_ni100k_rmBQ$sims.list$diff_EpsB, probs=c(0.5,0.05,0.95))
 
 #~ End of Script

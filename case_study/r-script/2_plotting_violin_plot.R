@@ -13,19 +13,13 @@ library(ggplot2)
 library(latex2exp)
 
 # set working directory
-#setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel/models")
-#setwd("~/UiT/GitProjects/A-dynamic-and-hierarchical-spatial-occupancy-model-for-interacting-species/case_study/model_output")
 setwd("./case_study/model_output")
 
 #load model
-#setwd("./hidden_block_ko_fromautoclass/ko_vj/model_output")
+
 dir()
 
-#load("va_snowbed_mustela_rodent_gof_nestedloop_temp_pri1_0005.rda")
 load("va_snowbed_mustela_rodent_gof_nestedloop_temp_pri1.rda")
-
-#load("va_snowbed_mustela_rodent_sdet_4stpm_ni100k_4.rda")
-#load(dir()[12])
 ##############################################################################
 
 # traceplots
@@ -143,7 +137,7 @@ str(out.gof$q97.5[c(10,12,11,13,14,16,15,17)])
 
 # the interaction
 
-# 95% CI's
+# 95% CRI's
 
 quantile(out.gof$sims.list$diff_gamA, probs=c(0.5,0.05,0.95)) 
 quantile(out.gof$sims.list$diff_gamB, probs=c(0.5,0.05,0.95)) 

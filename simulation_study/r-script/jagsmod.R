@@ -1,7 +1,7 @@
 
 # set working directory
-setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel")
-setwd("./models/hidden_block_sim")
+#setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel")
+setwd("./simulation_study")
 
 # Specify model in JAGS language
 sink("mod.txt")

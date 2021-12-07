@@ -2,7 +2,7 @@
 ##  A dynamic occupancy model for interacting species with two spatial scales model analyzing data from          ##  
 ##  a long-term monitoring program of small mammals on the arctic tundra                                         ##
 ##                 by Eivind Flittie Kleiven                                                                     ##
-##    Last updated 27.1.21                                                                                       ##
+##                                                                                                               ##
 ###################################################################################################################
 
 # a part of the code is modified from https://github.com/mikemeredith/AHM_code/blob/master/AHM2_ch04/AHM2_04.08.R
