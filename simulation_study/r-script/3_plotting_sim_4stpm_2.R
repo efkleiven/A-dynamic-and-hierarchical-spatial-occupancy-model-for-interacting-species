@@ -11,8 +11,9 @@ library(ggplot2)
 library(latex2exp)
 
 # set working directory
-setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel/models")   
-setwd("./hidden_block_sim/model_output")
+#setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel/models")   
+
+setwd("./simulation_study/model_output")
 
 #load model outputs
 load("mod_4stpm_sim_low_det_2.rda")
@@ -220,14 +221,15 @@ names(avr) <- c(names(true)[2],names(true)[3],names(true)[1])
 
 positions <-c("ld","md","hd", "lo","mo","ho") # spesify what order to plot the simulations
 
-par_names <- list('gamA' = parse(text = TeX("$\\gamma_{A}$")), 'gamB' = parse(text = TeX("$\\gamma_{B}$")), 
-                      'gamAB' = parse(text = TeX("$\\gamma_{A|B}$")), 'gamBA' = parse(text = TeX("$\\gamma_{B|A}$")),
-                      'epsA' = parse(text = TeX("$\\epsilon_{A}$")), 'epsB' = parse(text = TeX("$\\epsilon_{B}$")),
-                      'epsAB' = parse(text = TeX("$\\epsilon_{A|B}$")), 'epsBA' = parse(text = TeX("$\\epsilon_{B|A}$")),
-                      'GamA' = parse(text = TeX("$\\Gamma_{A}$")), 'GamB' = parse(text = TeX("$\\Gamma_{B}$")),
-                      'GamAB' = parse(text = TeX("$\\Gamma_{A|B}$")), 'GamBA' = parse(text = TeX("$\\Gamma_{B|A}$")),
-                      'EpsA' = parse(text = TeX("$E_{A}$")), 'EpsB' = parse(text = TeX("$E_{B}$")), 
-                      'EpsAB' = parse(text = TeX("$E_{A|B}$")), 'EpsBA' = parse(text = TeX("$E_{B|A}$")) )
+par_names <- list('GamA' = parse(text = TeX("$\\Gamma_{A}$")), 'GamB' = parse(text = TeX("$\\Gamma_{B}$")),
+                  'GamAB' = parse(text = TeX("$\\Gamma_{A|B}$")), 'GamBA' = parse(text = TeX("$\\Gamma_{B|A}$")),
+                  'EpsA' = parse(text = TeX("$E_{A}$")), 'EpsB' = parse(text = TeX("$E_{B}$")), 
+                  'EpsAB' = parse(text = TeX("$E_{A|B}$")), 'EpsBA' = parse(text = TeX("$E_{B|A}$")),
+                  'gamA' = parse(text = TeX("$\\gamma_{A}$")), 'gamB' = parse(text = TeX("$\\gamma_{B}$")), 
+                  'gamAB' = parse(text = TeX("$\\gamma_{A|B}$")), 'gamBA' = parse(text = TeX("$\\gamma_{B|A}$")),
+                  'epsA' = parse(text = TeX("$\\epsilon_{A}$")), 'epsB' = parse(text = TeX("$\\epsilon_{B}$")),
+                  'epsAB' = parse(text = TeX("$\\epsilon_{A|B}$")), 'epsBA' = parse(text = TeX("$\\epsilon_{B|A}$"))
+ )
 
 par_labeller <- function(variable,value){
   return(par_names[value])
@@ -241,7 +243,7 @@ ggplot(data=dat, aes(x=sim, y=dat, fill="grey"))+
   geom_point(data=avr, color="grey40", shape="-", size=20)+
   geom_point(data=true, color="red",  shape="-", size=20, alpha=0.8)+
   labs(y="", x="")+
-  facet_wrap(~param, labeller = par_labeller, ncol=4)+
+  facet_wrap(~param, labeller = par_labeller,  ncol=4)+
   theme(strip.text = element_text(size=12,face="bold"), 
         axis.text.x = element_text( size = 12, face="bold"), 
         axis.text.y = element_text( size = 12, face="bold"),
@@ -251,8 +253,8 @@ ggplot(data=dat, aes(x=sim, y=dat, fill="grey"))+
 
 
 # save plot
-#setwd("../plot")
-setwd("~/UiT/GitProjects/A-dynamic-and-hierarchical-spatial-occupancy-model-for-interacting-species/simulation_study/plot")
+setwd("../plot")
+#setwd("~/UiT/GitProjects/A-dynamic-and-hierarchical-spatial-occupancy-model-for-interacting-species/simulation_study/plot")
 ggsave( "modelperformance_4stpm_sim_gameps_4.png", width = 24, height = 20,units="cm", dpi = 300)
 
 

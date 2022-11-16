@@ -39,29 +39,30 @@ cat("
     
      
     # site parameters
-    gamA  ~ dbeta(4,4)
-    gamB  ~ dbeta(4,4)
-    gamAB ~ dbeta(4,4)
-    gamBA ~ dbeta(4,4)
-    epsA  ~ dbeta(4,4)
-    epsB  ~ dbeta(4,4)
-    epsAB ~ dbeta(4,4)
-    epsBA ~ dbeta(4,4)
+    gamA  ~ dunif(0,1)
+    gamB  ~ dunif(0,1)
+    gamAB ~ dunif(0,1)
+    gamBA ~ dunif(0,1)
+    epsA  ~ dunif(0,1)
+    epsB  ~ dunif(0,1)
+    epsAB ~ dunif(0,1)
+    epsBA ~ dunif(0,1)
     
     # block parameters
-    GamA  ~ dbeta(4,4)
-    GamB  ~ dbeta(4,4)
-    GamAB ~ dbeta(4,4)
-    GamBA ~ dbeta(4,4)
-    EpsA  ~ dbeta(4,4)
-    EpsB  ~ dbeta(4,4)
-    EpsAB ~ dbeta(4,4)
-    EpsBA ~ dbeta(4,4)
+    GamA  ~ dunif(0,1)
+    GamB  ~ dunif(0,1)
+    GamAB ~ dunif(0,1)
+    GamBA ~ dunif(0,1)
+    EpsA  ~ dunif(0,1)
+    EpsB  ~ dunif(0,1)
+    EpsAB ~ dunif(0,1)
+    EpsBA ~ dunif(0,1)
     
     # interscept det prob
+
     for(i in 1:2){    
-      alphaA0[i] ~ dlogis(0,1)
-      alphaB0[i] ~ dlogis(0,1)
+      alphaA0[i] ~ dnorm(0,1)
+      alphaB0[i] ~ dnorm(0,1)
     }
     
   # initial state parameters
@@ -391,80 +392,57 @@ cat("
     
     for(q2 in 1:length(uniq_site1_t0)){
       # ... for observed data
-      ext_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1))
+      ext_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
         
-      nonext_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1))
+      nonext_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
         
-      colo_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0))
+      colo_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <-  equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
         
-      noncolo_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0))
+      noncolo_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobs_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
       
-      ext_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1))
+      ext_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
         
-      nonext_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1))
+      nonext_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
       
-      colo_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0))
+      colo_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
         
-      noncolo_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0))
+      noncolo_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobs_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
     
       # ... for replicated data
-      extrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1))
+      extrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
         
-      nonextrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1))
+      nonextrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
         
-      colorep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0))
+      colorep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
         
-      noncolorep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0)*equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0))
+      noncolorep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0)*equals(zobsrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
       
-      extrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1))
+      extrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0) * equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
         
-      nonextrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1))
+      nonextrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],1)
         
-      colorep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0))
+      colorep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],1) * equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
         
-      noncolorep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0)*equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0))
+      noncolorep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],(uniq_time1_t0[q2]+1)],0)*equals(zobsrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]],0)
 
-        # Probability of each individual transition
+      
+      # Probability of each individual transition
      
-      noncolo.exp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        ifelse(z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 1-z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-gamAB), 1-z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-gamA)))
+      noncolo.exp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 1-z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-gamAB), 1-z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-gamA))
         
-      colo.exp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        ifelse(z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, (1-z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) * gamAB, 1-z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * gamA))
+      colo.exp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <-   ifelse(z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, (1-z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) * gamAB, 1-z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * gamA)
         
-      ext.exp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        ifelse(z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * epsAB, z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * epsA))
+      ext.exp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * epsAB, z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * epsA)
         
-      nonext.exp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        ifelse(z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-epsAB), z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-epsA)))
+      nonext.exp_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-epsAB), z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-epsA))
     
-      noncolo.exp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        ifelse(z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 1-z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-gamBA), 1-z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-gamB)))
+      noncolo.exp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 1-z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-gamBA), 1-z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-gamB))
         
-      colo.exp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        ifelse(z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, (1-z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) * gamBA, 1-z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * gamB))
+      colo.exp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, (1-z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) * gamBA, 1-z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * gamB)
         
-      ext.exp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        ifelse(z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * epsBA, z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * epsB))
+      ext.exp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * epsBA, z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * epsB)
         
-      nonext.exp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        ifelse(z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-epsBA), z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-epsB)))
+      nonext.exp_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(z_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-epsBA), z_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] * (1-epsB))
        
      # Det. frequencies for observed and replicated data
       detfreq_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- sum(y_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2],])
@@ -484,30 +462,22 @@ cat("
       
       # Chi-square and Freeman-Tukey discrepancy measures
       # ..... for actual data setuniq_block1_t0[q2]
-      x2Closed_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 , 
-        pow((detfreq_A[(uniq_block1_t0[q2]-1)*6 + uniq_site1_t0[q2], uniq_time1_t0[q2]] - E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]),2) / (E_A[(uniq_block1_t0[q2]-1)*6 + uniq_site1_t0[q2],uniq_time1_t0[q2]] + e))
+      x2Closed_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((detfreq_A[(uniq_block1_t0[q2]-1)*6 + uniq_site1_t0[q2], uniq_time1_t0[q2]] - E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]),2) / (E_A[(uniq_block1_t0[q2]-1)*6 + uniq_site1_t0[q2],uniq_time1_t0[q2]] + e)
         
-      ftClosed_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2], uniq_time1_t0[q2]]==1, 0,
-        pow((sqrt(detfreq_A[(uniq_block1_t0[q2]-1)*6 + uniq_site1_t0[q2], uniq_time1_t0[q2]]) - sqrt(E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]])),2))
+      ftClosed_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((sqrt(detfreq_A[(uniq_block1_t0[q2]-1)*6 + uniq_site1_t0[q2], uniq_time1_t0[q2]]) - sqrt(E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]])),2)
       
-      x2Closed_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        pow((detfreq_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] - E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]),2) / (E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] + e))
+      x2Closed_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((detfreq_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] - E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]),2) / (E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] + e)
         
-      ftClosed_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        pow((sqrt(detfreq_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) - sqrt(E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]])),2))
+      ftClosed_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((sqrt(detfreq_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) - sqrt(E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]])),2)
       
       # ..... for replicated data set
-      x2repClosed_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        pow((detfreqrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] - E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]),2) / (E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] + e))
+      x2repClosed_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((detfreqrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] - E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]),2) / (E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] + e)
         
-      ftrepClosed_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        pow((sqrt(detfreqrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) - sqrt(E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]])),2))
+      ftrepClosed_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((sqrt(detfreqrep_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) - sqrt(E_A[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]])),2)
       
-      x2repClosed_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 , 
-        pow((detfreqrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] - E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]),2) / (E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] + e))
+      x2repClosed_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((detfreqrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] - E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]),2) / (E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] + e)
         
-      ftrepClosed_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- ifelse(whichNA2[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]==1, 0 ,
-        pow((sqrt(detfreqrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) - sqrt(E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]])),2))
+      ftrepClosed_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]] <- pow((sqrt(detfreqrep_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]]) - sqrt(E_B[(uniq_block1_t0[q2]-1)*6+uniq_site1_t0[q2],uniq_time1_t0[q2]])),2)
       } # end q2 loop
  
   for(t in 1:(nseason-1)){
@@ -600,17 +570,24 @@ cat("
 sink()
 
 ## import data
-setwd("./data") # set wd to where the data is stored
 
-#load("occm_mustela_rodent_var_snowbed.rda")    
-#load("case_study_data.RData")
-load("occm_mustela_rodent_var_snowbed_rmBQ.rda")
 
-yb <-occm_ko3 # change name of imported object to fit with the rest of the code
+#setwd("./data") # set wd to where the data is stored
+setwd("./data/revision2")
+
+#load("occm_mustela_rodent_var_snowbed_rmBQ.rda")
+#load("occm_rodent_coatdata_2021.rda")
+
+load("occm_vole_mustelid_snowbed_2016_2021.rda")
+
+#yb <-occm_ko3 # change name of imported object to fit with the rest of the code
+yb <-occm_va # change name of imported object to fit with the rest of the code
 
 summary(yb)
+dim(yb)
+yb
 
-nas <- which(is.na(yb))
+nas <- which(is.na(yb)) # funker ikke!
 
 #replace NA's with 0's 
 yb2 <- yb
@@ -619,7 +596,7 @@ yb[is.na(yb)] <- 1
 
 dim(yb) # check that dimensions are ok
 
-# which data points excist
+# which data points exist
 has_data <- which(
   !is.na(yb),
   arr.ind = TRUE
@@ -654,6 +631,7 @@ uniq_block_time_t1 <- dplyr::distinct(dat2)
 
 uniq_block2_t1 <- dplyr::pull(uniq_block_time_t1,1) 
 uniq_time2_t1 <- dplyr::pull(uniq_block_time_t1,2) 
+
 # remove the last primary occasion, as we would need to have t+1 in the loop in the jags model
 uniq_block_time_t0 <- dplyr::filter(uniq_block_time_t1, !time_id==max(uniq_block_time_t1$time_id))
 
@@ -675,17 +653,52 @@ whichNA2[(dim(whichNA)[1]*5+1):(dim(whichNA)[1]*6),] <- whichNA[,6,]
 whichNA2[(dim(whichNA)[1]*6+1):(dim(whichNA)[1]*7),] <- whichNA[,7,]
 whichNA2[(dim(whichNA)[1]*7+1):(dim(whichNA)[1]*8),] <- whichNA[,8,]
 
+dim(whichNA2)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # which primary occasions don't have any NA's
 has_data2 <- which(apply(yb2, c(1,2,3), function(x){ !any(is.na(x))}), arr.ind=TRUE)
 
-time_id2  <- rep(has_data2[,3], times=7)
-site_id2  <- rep(has_data2[,1], times=7)
-block_id2 <- rep(has_data2[,2], times=7)
-day_id2   <- c(rep(1, times=nrow(has_data2)), rep(2, times=nrow(has_data2)), rep(3, times=nrow(has_data2)), rep(4, times=nrow(has_data2)), rep(5, times=nrow(has_data2)), rep(6, times=nrow(has_data2)), rep(7, times=nrow(has_data2)))
+# make vectors for full time, site, block and day id
+time_id2  <- rep(has_data2[,3], each=7)
+site_id2  <- rep(has_data2[,1], each=7)
+block_id2 <- rep(has_data2[,2], each=7)
+day_id2   <- rep(c(1:7), times=nrow(has_data2))
 
-y_long <- yb[!is.na(yb)]
+# make table with unique block, site and time combinations
+dat <- tibble::as_tibble(cbind(site_id2, block_id2, time_id2))
+uniq_site_block_time <- dplyr::distinct(dat)
 
-y_long[nas] <- NA
+# making vectors with indexes for site, block and time, with full time span
+uniq_site1_t1 <- dplyr::pull(uniq_site_block_time,1)
+uniq_block1_t1 <- dplyr::pull(uniq_site_block_time,2) 
+uniq_time1_t1 <- dplyr::pull(uniq_site_block_time,3) 
+
+# remove the last primary occasion, as we would need to have t+1 in the loop in the jags model
+uniq_site_block_time_t0 <- dplyr::filter(uniq_site_block_time, !time_id2==max(uniq_site_block_time$time_id2))
+
+# making vectors with indexes for site, block and time, without last primary occasion
+uniq_site1_t0 <- dplyr::pull(uniq_site_block_time_t0,1)
+uniq_block1_t0 <- dplyr::pull(uniq_site_block_time_t0,2) 
+uniq_time1_t0 <- dplyr::pull(uniq_site_block_time_t0,3) 
+
+# making indexes for uniqe block and time combinations
+dat2 <- tibble::as_tibble(cbind(block_id2, time_id2))
+uniq_block_time_t1 <- dplyr::distinct(dat2)
+
+uniq_block2_t1 <- dplyr::pull(uniq_block_time_t1,1) 
+uniq_time2_t1 <- dplyr::pull(uniq_block_time_t1,2) 
+
+# remove the last primary occasion, as we would need to have t+1 in the loop in the jags model
+uniq_block_time_t0 <- dplyr::filter(uniq_block_time_t1, !time_id2==max(uniq_block_time_t1$time_id2))
+
+uniq_block2_t0 <- dplyr::pull(uniq_block_time_t0,1) 
+uniq_time2_t0 <- dplyr::pull(uniq_block_time_t0,2) 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+y_long <- yb2[!is.na(yb2)]
+
+#y_long[nas] <- NA
 
 nvisits = length(y_long)
 
@@ -695,15 +708,15 @@ nvisits = length(y_long)
 #season[season==1] <- 2
 #season[season==0] <- 1
 
-load("hab.rda")
-
-load("season_cov_from_temp.rda")
+setwd("../")
+#load("season_cov_from_temp.rda")
+load("season_cov_fromTemp_2021.rda")
 
 # restructuring sites to match the occupancy data frame
-season1 <- season_cov[6,3:4,1:203] 
-season_cov[12,3:4, 1:203] <- season1
+season1 <- season_cov[6,3:4,] 
+season_cov[12,3:4, ] <- season1
 
-season <- season_cov[7:12, , 1:203]
+season <- season_cov[7:12, , ]
 # contains NA's but we do not have any data points for these 
 summary(season)
 
@@ -723,11 +736,11 @@ summary(season)
 data <-list(nseason = dim(yb)[3], nblock = dim(yb)[2], nsite = dim(yb)[1], nsurvey = dim(yb)[4], 
             nout=4, y = y_long, season = season, e = 0.0001, nvisits=nvisits, 
             time_id=time_id, block_id=block_id, site_id=site_id, day_id=day_id,
+            
             uniq_site1_t0=uniq_site1_t0, uniq_block1_t0=uniq_block1_t0, uniq_time1_t0=uniq_time1_t0,
             uniq_site1_t1=uniq_site1_t1, uniq_block1_t1=uniq_block1_t1, uniq_time1_t1=uniq_time1_t1,
             uniq_block2_t0=uniq_block2_t0, uniq_time2_t0=uniq_time2_t0,
-            uniq_block2_t1=uniq_block2_t1, uniq_time2_t1=uniq_time2_t1,
-            whichNA2=whichNA2)
+            uniq_block2_t1=uniq_block2_t1, uniq_time2_t1=uniq_time2_t1)
 
 #yb=yb2,
 
@@ -778,17 +791,17 @@ params <- c("gamA","gamB","gamAB","gamBA","epsA","epsB","epsAB","epsBA","psi",
 
 
 # MCMC settings
-ni <- 20000   ;   nt <- 20   ;   nb <- 1000  ;   nc <- 6    ;   na <- 5000
+ni <- 20   ;   nt <- 1   ;   nb <- 1  ;   nc <- 1    ;   na <- 0
 
 # run model in jags
 setwd("../")
 
 #ptm2 <- proc.time()
-out.gof <- jags(data, inits=inits, parameters.to.save=params, "mod_spatial_dynocc_bayp.txt", n.chains = nc,
+out.gof1 <- jags(data, inits=inits, parameters.to.save=params, "mod_spatial_dynocc_bayp.txt", n.chains = nc,
                     n.thin = nt, n.iter = ni, n.burnin = nb, n.adapt=na, parallel = T)
 #proc.time() - ptm2                
 
 # Save model
-setwd("./model_output")
-save(out.gof, file="va_snowbed_mustela_rodent_gof_nestedloop_temp_pri2_005.rda")
+#setwd("./model_output/revision2")
+#save(out.gof1, file="va_snowbed_mustela_rodent_gof_nestedloop_temp_pri1_005_2016_2021.rda")
 #~ End of script

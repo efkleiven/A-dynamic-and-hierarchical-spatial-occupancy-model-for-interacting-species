@@ -101,7 +101,7 @@ table(df3$least_weasel)
 
 #############################################################
 # import metadata
-
+setwd("C:/Users/ekl013/OneDrive - UiT Office 365/GitProjects/A-dynamic-and-hierarchical-spatial-occupancy-model-for-interacting-species")
 setwd("H:/UiT/CameraTrapsForSmallMammals/Data")
 metadata <- read.csv("Small mammal camera trap metadata locations.csv", header=T, sep=";")
 head(metadata)

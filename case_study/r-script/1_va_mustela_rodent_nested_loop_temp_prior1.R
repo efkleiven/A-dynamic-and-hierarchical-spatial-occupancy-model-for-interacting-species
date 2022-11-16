@@ -15,8 +15,8 @@ library(jagsUI)
 # set working directory
 #setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel")
 #setwd("./models/hidden_block_ko_fromautoclass/ko_vj")
-
-setwd("~/UiT/GitProjects/A-dynamic-and-hierarchical-spatial-occupancy-model-for-interacting-species/case_study")
+setwd("C:/Users/ekl013/OneDrive - UiT Office 365/GitProjects/A-dynamic-and-hierarchical-spatial-occupancy-model-for-interacting-species")
+setwd("./case_study")
 
 #setwd("H:/UiT/GitProjects/A-dynamic-and-hierarchical-spatial-occupancy-model-for-interacting-species/case_study")
 
@@ -600,14 +600,13 @@ cat("
 sink()
 
 ## import data
-setwd("./data") # set wd to where the data is stored
+setwd("./data/revision2") # set wd to where the data is stored
 
-#load("occm_mustela_rodent_var_snowbed.rda")    
-#load("case_study_data.RData")
-load("occm_mustela_rodent_var_snowbed_rmBQ.rda")
+#load("occm_mustela_rodent_var_snowbed_rmBQ.rda")
+load("occm_rodent_coatdata_2021.rda")
 
-yb <-occm_ko3 # change name of imported object to fit with the rest of the code
-
+yb <-occm_va3[,,1:263,] # change name of imported object to fit with the rest of the code
+dim(yb)
 summary(yb)
 
 nas <- which(is.na(yb))
@@ -696,15 +695,15 @@ nvisits = length(y_long)
 #season[season==1] <- 2
 #season[season==0] <- 1
 
-load("hab.rda")
+#load("hab_2021.rda")
 
-load("season_cov_from_temp.rda")
-
+load("season_cov.rda")
+dim(season_cov)
 # restructuring sites to match the occupancy data frame
-season1 <- season_cov[6,3:4,1:203] 
-season_cov[12,3:4, 1:203] <- season1
+season1 <- season_cov[6,3:4,1:263] 
+season_cov[12,3:4, 1:263] <- season1
 
-season <- season_cov[7:12, , 1:203]
+season <- season_cov[7:12, , 1:263]
 # contains NA's but we do not have any data points for these 
 summary(season)
 
@@ -728,9 +727,9 @@ data <-list(nseason = dim(yb)[3], nblock = dim(yb)[2], nsite = dim(yb)[1], nsurv
             uniq_site1_t1=uniq_site1_t1, uniq_block1_t1=uniq_block1_t1, uniq_time1_t1=uniq_time1_t1,
             uniq_block2_t0=uniq_block2_t0, uniq_time2_t0=uniq_time2_t0,
             uniq_block2_t1=uniq_block2_t1, uniq_time2_t1=uniq_time2_t1,
-            uniq_block_time_t1, whichNA2=whichNA2)
+             whichNA2=whichNA2)
 
-uniq_block_time_t1
+#uniq_block_time_t1=uniq_block_time_t1,
 #yb=yb2,
 
 # naming some parameters for loops further down in this script
@@ -783,7 +782,7 @@ params <- c("gamA","gamB","gamAB","gamBA","epsA","epsB","epsAB","epsBA","psi",
 ni <- 20000   ;   nt <- 20   ;   nb <- 1000  ;   nc <- 6    ;   na <- 5000
 
 # run model in jags
-setwd("../")
+setwd("../../../")
 
 #ptm2 <- proc.time()
 out.gof <- jags(data, inits=inits, parameters.to.save=params, "mod_spatial_dynocc_bayp.txt", n.chains = nc,
@@ -791,6 +790,6 @@ out.gof <- jags(data, inits=inits, parameters.to.save=params, "mod_spatial_dynoc
 #proc.time() - ptm2                
 
 # Save model
-setwd("./model_output")
+setwd("../../model_output/revision2")
 save(out.gof, file="va_snowbed_mustela_rodent_gof_nestedloop_temp_pri1_005.rda")
 #~ End of script

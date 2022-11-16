@@ -600,16 +600,22 @@ cat("
 sink()
 
 ## import data
-setwd("./data") # set wd to where the data is stored
 
-#load("occm_mustela_rodent_var_snowbed.rda")    
-#load("case_study_data.RData")
-load("occm_mustela_rodent_var_snowbed_rmBQ.rda")
 
-yb <-occm_ko3 # change name of imported object to fit with the rest of the code
+#setwd("./data") # set wd to where the data is stored
+setwd("./data/revision2")
+
+#load("occm_mustela_rodent_var_snowbed_rmBQ.rda")
+#load("occm_rodent_coatdata_2021.rda")
+
+load("occm_vole_mustelid_snowbed_2016_2020.rda")
+
+#yb <-occm_ko3 # change name of imported object to fit with the rest of the code
+yb <-occm_va # change name of imported object to fit with the rest of the code
 
 summary(yb)
-
+dim(yb)
+yb
 nas <- which(is.na(yb))
 
 #replace NA's with 0's 
@@ -695,15 +701,14 @@ nvisits = length(y_long)
 #season[season==1] <- 2
 #season[season==0] <- 1
 
-load("hab.rda")
-
+setwd("../")
 load("season_cov_from_temp.rda")
 
 # restructuring sites to match the occupancy data frame
-season1 <- season_cov[6,3:4,1:203] 
-season_cov[12,3:4, 1:203] <- season1
+season1 <- season_cov[6,3:4,1:252] 
+season_cov[12,3:4, 1:252] <- season1
 
-season <- season_cov[7:12, , 1:203]
+season <- season_cov[7:12, , 1:252]
 # contains NA's but we do not have any data points for these 
 summary(season)
 
@@ -789,6 +794,6 @@ out.gof <- jags(data, inits=inits, parameters.to.save=params, "mod_spatial_dynoc
 #proc.time() - ptm2                
 
 # Save model
-setwd("./model_output")
+setwd("./model_output/revision2")
 save(out.gof, file="va_snowbed_mustela_rodent_gof_nestedloop_temp_pri2_005.rda")
 #~ End of script

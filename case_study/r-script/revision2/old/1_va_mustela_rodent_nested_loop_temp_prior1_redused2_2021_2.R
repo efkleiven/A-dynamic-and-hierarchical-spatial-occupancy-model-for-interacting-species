@@ -1,4 +1,23 @@
+###################################################################################################################
+##  A dynamic occupancy model for interacting species with two spatial scales model analyzing data from          ##  
+##  a long-term monitoring program of small mammals on the arctic tundra                                         ##
+##                 by Eivind Flittie Kleiven                                                                     ##
+##                                                                                                               ##
+###################################################################################################################
 
+# a part of the code is modified from https://github.com/mikemeredith/AHM_code/blob/master/AHM2_ch04/AHM2_04.08.R
+
+# Call jags(and other packages)
+rm(list=ls())
+
+library(jagsUI)
+
+# set working directory
+setwd("C:/Users/ekl013/OneDrive - UiT Office 365/GitProjects/A-dynamic-and-hierarchical-spatial-occupancy-model-for-interacting-species/case_study")
+
+# Specify model in JAGS language
+sink("mod_spatial_dynocc_bayp.txt")
+cat("
     model{
     
     ###########################################
@@ -373,17 +392,17 @@ for(i in 1:nz2){
       
       # Probability of each individual transition
      
-      noncolo.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, 1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-gamAB), 1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-gamA))
+      noncolo.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * (1-gamAB), (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * (1-gamA))
         
-      colo.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <-   ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamAB, 1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * gamA)
+      colo.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <-   ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamAB, (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamA)
         
       ext.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * epsAB, z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * epsA)
         
       nonext.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-epsAB), z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-epsA))
     
-      noncolo.exp_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, 1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-gamBA), 1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-gamB))
+      noncolo.exp_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * (1-gamBA), (1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * (1-gamB))
         
-      colo.exp_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamBA, 1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * gamB)
+      colo.exp_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamBA, (1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamB)
         
       ext.exp_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * epsBA, z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * epsB)
         
@@ -524,4 +543,208 @@ for(i in 1:nz2){
   FTratioClosed_B   <- FTClosed_B / FTrepClosed_B
 
     }# end
-    
+    ",fill = TRUE)
+sink()
+
+## import data
+
+
+#setwd("./data") # set wd to where the data is stored
+setwd("./data/revision2")
+
+load("occm_vole_mustelid_snowbed_2016_2021.rda")
+
+yb <-occm_va # change name of imported object to fit with the rest of the code
+
+summary(yb)
+dim(yb) # check that dimensions are ok
+
+# manually remove seasons with only missing data
+yb <- yb[,,-c(45,105,149,150),]
+
+#define some parameters for later use in dataformating
+nseason = dim(yb)[3]
+nblock = dim(yb)[2]
+nsite = dim(yb)[1]
+nsurvey = dim(yb)[4]
+
+# which data points exist
+has_data <- which(
+  !is.na(yb),
+  arr.ind = TRUE
+)
+
+time_id <- has_data[,3]
+site_id <- has_data[,1]
+block_id <- has_data[,2]
+day_id <- has_data[,4]
+
+# Data in long formate without missing observations
+y_long <- yb[!is.na(yb)]
+
+# length of longdata
+nvisits = length(y_long)
+
+# make indeks for complete cases (data from all site in all days)
+dim(yb)
+
+# need to subset the dataset to only include primary occassion that have data for all secondary occassions
+
+dat <- array(NA, dim=c(nsite,nblock,nseason))
+dat2 <- array(NA, dim=c(nsite,nblock,nseason))
+
+# find complete cases
+for(i in 1:nsite){
+  for(b in 1:nblock){
+dat[i,b,1:nseason]<- complete.cases(yb[i,b,,])
+  }}
+
+# find complete cases
+for(i in 1:nsite){
+  for(b in 1:nblock){
+    for(t in 1:nseason){
+    dat2[i,b,t]<- !any(is.na(yb[i,b,t,]))
+  }}}
+
+# make indecied of primary occ to remove 
+ind <- which(dat==T, arr.ind=T)
+length(ind)
+
+time_id2 <- ind[,3]
+site_id2 <- ind[,1]
+block_id2 <- ind[,2]
+
+nz <- length(time_id2) 
+
+# find complete cases that also have complete cases in previous time step
+dat3 <- array(NA, dim=c(nsite,nblock,nseason))
+
+for(i in 1:nsite){
+  for(b in 1:nblock){
+    for(t in 2:nseason){
+      dat3[i,b,t]<- !any(is.na(yb[i,b,t,])) & !any(is.na(yb[i,b,t-1,]))  
+    }}}
+
+ind3 <- which(dat3==T, arr.ind=T)
+
+time_id3 <- ind3[,3]
+site_id3 <- ind3[,1]
+block_id3 <- ind3[,2]
+
+nz2 <- length(time_id3) 
+
+# make index for sum-function in JAGS
+
+library(tidyverse)
+
+ind3 <- as_tibble(ind3)
+
+ind4 <- array(NA, dim=c(nsite*nblock,nseason))
+indl <- array(NA, dim=c(nseason))
+
+for(t in 2:nseason){
+  dat1 <- filter(ind3, dim3==t)
+  indl[t] <- length(as.numeric(unlist((dat1[,2]-1)*6 + dat1[,1])))
+  ind4[1:indl[t],t] <- as.numeric(unlist((dat1[,2]-1)*6 + dat1[,1]))
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Load covariates
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+setwd("../")
+#load("season_cov_from_temp.rda")
+load("season_cov_fromTemp_2021.rda")
+
+# restructuring sites to match the occupancy data frame
+season1 <- season_cov[6,3:4,] 
+season_cov[12,3:4, ] <- season1
+
+# manually remove seasons with only missing data
+season <- season_cov[,,-c(45,105,149,150)]
+
+# make sure dimentions are the same as for observations
+season <- season_cov[7:12, ,1:nseason]
+
+# contains NA's but we do not have any data points for these 
+summary(season)
+
+# replace NA's with mean of the same site from other blocks
+
+for(i in 1:dim(season)[1]){
+  for(j in 1:dim(season)[3]){
+    for(k in 1:dim(season)[2])
+    if(is.na(season[i,k,j])){
+    season[i,k,j] <- ceiling(mean(season[i,,j], na.rm=T))  
+    }
+  }}
+
+summary(season)
+
+# give data
+data <-list(nseason = dim(yb)[3], nblock = dim(yb)[2], nsite = dim(yb)[1], nsurvey = dim(yb)[4], 
+            nout=4, y = y_long, season = season, e = 0.0001, nvisits=nvisits, 
+            time_id=time_id, block_id=block_id, site_id=site_id, day_id=day_id,
+            nz=nz, time_id2=time_id2, block_id2=block_id2, site_id2=site_id2,
+            nz2=nz2, time_id3=time_id3, block_id3=block_id3, site_id3=site_id3,
+            ind4=ind4, indl=indl)
+
+#yb=yb2,
+
+# naming some parameters for loops further down in this script
+nseason = dim(yb)[3]; nblock = dim(yb)[2]; nsite = dim(yb)[1]; nsurvey = dim(yb)[4]
+
+# Initial values for state
+sp_inits <- apply(yb,c(1,2,3),max)
+
+# loop to make cases where both state 2 and 3 is observed within the same primary occasion have initial value 4
+dataL <- array(0,dim=c(nsite,nblock,nseason))
+for(j in 1:nsite){
+  for(b in 1:nblock){
+    for(i in 1:nseason){
+      if (is.element(0, match(c(2,3),yb[j,b,i,], nomatch = FALSE, incomparables = FALSE))) 
+        dataL[j,b,i] <- "FALSE"
+      else
+        dataL[j,b,i] <- "TRUE"
+    }}}
+
+for(j in 1:nsite){
+  for(b in 1:nblock){
+    for(i in 1:nseason){
+      if(dataL[j,b,i]==TRUE){
+        sp_inits[j,b,i] <- 4}
+    }}}
+
+# give initial values
+inits=function(){list( 
+  z = sp_inits, alphaA0=runif(2), alphaB0=runif(2),
+  gamA=runif(1,0.1,0.9), gamB=runif(1,0.1,0.9), gamAB=runif(1,0.1,0.9), gamBA=runif(1,0.1,0.9),
+  epsA=runif(1,0.1,0.9), epsB=runif(1,0.1,0.9), epsAB=runif(1,0.1,0.9), epsBA=runif(1,0.1,0.9), 
+  GamA=runif(1,0.1,0.9), GamB=runif(1,0.1,0.9), GamAB=runif(1,0.1,0.9), GamBA=runif(1,0.1,0.9),
+  EpsA=runif(1,0.1,0.9), EpsB=runif(1,0.1,0.9), EpsAB=runif(1,0.1,0.9), EpsBA=runif(1,0.1,0.9)
+)}
+
+# Parameters monitored
+params <- c("gamA","gamB","gamAB","gamBA","epsA","epsB","epsAB","epsBA","psi",
+            "GamA","GamB","GamAB","GamBA","EpsA","EpsB","EpsAB","EpsBA", "pA","pB","z","x",
+            "alphaA0","alphaB0", 
+            "diff_gamA", "diff_gamB", "diff_epsA", "diff_epsB", "diff_GamA", "diff_GamB", "diff_EpsA", "diff_EpsB",
+            "ratio_gamA", "ratio_gamB", "ratio_epsA", "ratio_epsB", "ratio_GamA", "ratio_GamB", "ratio_EpsA", "ratio_EpsB",
+            'Chi2Open_A', 'Chi2repOpen_A','Chi2ratioOpen_A', 'Chi2Closed_A', 'Chi2repClosed_A', 'Chi2ratioClosed_A', 'tm_A', 'tmrep_A', 'Etm_A', 
+            'Chi2Open_B', 'Chi2repOpen_B','Chi2ratioOpen_B', 'Chi2Closed_B', 'Chi2repClosed_B', 'Chi2ratioClosed_B',  'tm_B', 'tmrep_B', 'Etm_B',
+            'FTClosed_B', 'FTrepClosed_B', 'FTratioClosed_B','FTClosed_A', 'FTrepClosed_A', 'FTratioClosed_A')
+
+
+# MCMC settings
+ni <- 20000   ;   nt <- 10   ;   nb <- 1000  ;   nc <- 6    ;   na <- 5000
+
+# run model in jags
+setwd("../")
+
+out.gof1 <- jags(data, inits=inits, parameters.to.save=params, "mod_spatial_dynocc_bayp.txt", n.chains = nc,
+                    n.thin = nt, n.iter = ni, n.burnin = nb, n.adapt=na, parallel = T)
+
+# Save model
+setwd("./model_output/revision2")
+save(out.gof1, file="va_snowbed_mustela_rodent_gof_pri1_0005_2016_2021_2.rda")
+#~ End of script

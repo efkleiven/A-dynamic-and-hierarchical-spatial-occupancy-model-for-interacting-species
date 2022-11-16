@@ -37,31 +37,30 @@ cat("
     ##  Priors  ##    
     ##############
     
-     
     # site parameters
-    gamA  ~ dbeta(4,4)
-    gamB  ~ dbeta(4,4)
-    gamAB ~ dbeta(4,4)
-    gamBA ~ dbeta(4,4)
-    epsA  ~ dbeta(4,4)
-    epsB  ~ dbeta(4,4)
-    epsAB ~ dbeta(4,4)
-    epsBA ~ dbeta(4,4)
+    gamA  ~ dbeta(4,2)
+    gamB  ~ dbeta(2,4)
+    gamAB ~ dbeta(2,4)
+    gamBA ~ dbeta(4,2)
+    epsA  ~ dbeta(2,4)
+    epsB  ~ dbeta(4,2)
+    epsAB ~ dbeta(4,2)
+    epsBA ~ dbeta(2,4)
     
     # block parameters
-    GamA  ~ dbeta(4,4)
-    GamB  ~ dbeta(4,4)
-    GamAB ~ dbeta(4,4)
-    GamBA ~ dbeta(4,4)
-    EpsA  ~ dbeta(4,4)
-    EpsB  ~ dbeta(4,4)
-    EpsAB ~ dbeta(4,4)
-    EpsBA ~ dbeta(4,4)
+    GamA  ~ dbeta(2,4)
+    GamB  ~ dbeta(2,4)
+    GamAB ~ dbeta(2,4)
+    GamBA ~ dbeta(2,4)
+    EpsA  ~ dbeta(2,4)
+    EpsB  ~ dbeta(4,2)
+    EpsAB ~ dbeta(4,2)
+    EpsBA ~ dbeta(2,4)
     
     # interscept det prob
     for(i in 1:2){    
-      alphaA0[i] ~ dlogis(0,1)
-      alphaB0[i] ~ dlogis(0,1)
+      alphaA0[i] ~ dnorm(0.5,1)
+      alphaB0[i] ~ dnorm(-0.5,1)
     }
     
   # initial state parameters
@@ -600,16 +599,22 @@ cat("
 sink()
 
 ## import data
-setwd("./data") # set wd to where the data is stored
 
-#load("occm_mustela_rodent_var_snowbed.rda")    
-#load("case_study_data.RData")
-load("occm_mustela_rodent_var_snowbed_rmBQ.rda")
 
-yb <-occm_ko3 # change name of imported object to fit with the rest of the code
+#setwd("./data") # set wd to where the data is stored
+setwd("./data/revision2")
+
+#load("occm_mustela_rodent_var_snowbed_rmBQ.rda")
+#load("occm_rodent_coatdata_2021.rda")
+
+load("occm_vole_mustelid_snowbed_2016_2021.rda")
+
+#yb <-occm_ko3 # change name of imported object to fit with the rest of the code
+yb <-occm_va # change name of imported object to fit with the rest of the code
 
 summary(yb)
-
+dim(yb)
+yb
 nas <- which(is.na(yb))
 
 #replace NA's with 0's 
@@ -695,15 +700,15 @@ nvisits = length(y_long)
 #season[season==1] <- 2
 #season[season==0] <- 1
 
-load("hab.rda")
-
-load("season_cov_from_temp.rda")
+setwd("../")
+#load("season_cov_from_temp.rda")
+load("season_cov_fromTemp_2021.rda")
 
 # restructuring sites to match the occupancy data frame
-season1 <- season_cov[6,3:4,1:203] 
-season_cov[12,3:4, 1:203] <- season1
+season1 <- season_cov[6,3:4,] 
+season_cov[12,3:4, ] <- season1
 
-season <- season_cov[7:12, , 1:203]
+season <- season_cov[7:12, , ]
 # contains NA's but we do not have any data points for these 
 summary(season)
 
@@ -784,11 +789,11 @@ ni <- 20000   ;   nt <- 20   ;   nb <- 1000  ;   nc <- 6    ;   na <- 5000
 setwd("../")
 
 #ptm2 <- proc.time()
-out.gof <- jags(data, inits=inits, parameters.to.save=params, "mod_spatial_dynocc_bayp.txt", n.chains = nc,
+out.gof3 <- jags(data, inits=inits, parameters.to.save=params, "mod_spatial_dynocc_bayp.txt", n.chains = nc,
                     n.thin = nt, n.iter = ni, n.burnin = nb, n.adapt=na, parallel = T)
 #proc.time() - ptm2                
 
 # Save model
-setwd("./model_output")
-save(out.gof, file="va_snowbed_mustela_rodent_gof_nestedloop_temp_pri2_005.rda")
+setwd("./model_output/revision2")
+save(out.gof3, file="va_snowbed_mustela_rodent_gof_nestedloop_temp_pri3_005_2021.rda")
 #~ End of script

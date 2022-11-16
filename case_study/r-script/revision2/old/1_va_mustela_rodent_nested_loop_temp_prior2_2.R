@@ -600,16 +600,18 @@ cat("
 sink()
 
 ## import data
+
+
 setwd("./data") # set wd to where the data is stored
 
-#load("occm_mustela_rodent_var_snowbed.rda")    
-#load("case_study_data.RData")
 load("occm_mustela_rodent_var_snowbed_rmBQ.rda")
 
+#load("occm_rodent_coatdata_2021.rda")
 yb <-occm_ko3 # change name of imported object to fit with the rest of the code
 
 summary(yb)
-
+dim(yb)
+yb
 nas <- which(is.na(yb))
 
 #replace NA's with 0's 
@@ -778,7 +780,7 @@ params <- c("gamA","gamB","gamAB","gamBA","epsA","epsB","epsAB","epsBA","psi",
 
 
 # MCMC settings
-ni <- 20000   ;   nt <- 20   ;   nb <- 1000  ;   nc <- 6    ;   na <- 5000
+ni <- 20   ;   nt <- 1   ;   nb <- 1  ;   nc <- 1    ;   na <- 5
 
 # run model in jags
 setwd("../")

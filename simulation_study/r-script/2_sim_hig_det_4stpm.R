@@ -10,8 +10,8 @@ rm(list=ls())
 library(jagsUI)
 
 # set working directory
-setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel")
-setwd("./models/hidden_block_sim")
+#setwd("~/UiT/Manuskript/TeoreticalModelingOfSmallRodents&Mustelids/OccupancyModel")
+setwd("C:/Users/ekl013/OneDrive - UiT Office 365/GitProjects/A-dynamic-and-hierarchical-spatial-occupancy-model-for-interacting-species/simulation_study")
 
 ## import data
 setwd("./data")
@@ -26,7 +26,7 @@ params <- c("gamA","gamB","gamAB","gamBA","epsA","epsB","epsAB","epsBA","psi",
             "z","x")
 
 # MCMC settings
-ni <- 5000  ;   nt <- 10   ;   nb <- 0   ;   nc <- 4    ;   na <- 1000
+ni <- 5000  ;   nt <- 10   ;   nb <- 500   ;   nc <- 4    ;   na <- 1000
 
 ##############################################
 # make loop over 50 data sets
@@ -80,5 +80,5 @@ mod_4stpm_sim_hig_det[[q]] <- jags(data, inits=inits, params, "mod.txt", n.chain
 
 # Save model
 setwd("./model_output")
-save(mod_4stpm_sim_hig_det, file="mod_4stpm_sim_hig_det.rda")
+save(mod_4stpm_sim_hig_det, file="mod_4stpm_sim_hig_det_test1.rda")
 
