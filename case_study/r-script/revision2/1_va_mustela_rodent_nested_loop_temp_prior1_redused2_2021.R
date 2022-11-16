@@ -397,7 +397,7 @@ for(i in 1:nz2){
       
       # Probability of each individual transition
      
-      noncolo.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * (1-gamAB), 1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-gamA))
+      noncolo.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * (1-gamAB), (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * (1-gamA))
         
       colo.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <-   ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamAB, (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamA)
         
