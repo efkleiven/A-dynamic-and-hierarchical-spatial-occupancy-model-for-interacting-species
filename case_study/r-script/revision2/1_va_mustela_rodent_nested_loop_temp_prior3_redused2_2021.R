@@ -394,17 +394,17 @@ for(i in 1:nz2){
       
       # Probability of each individual transition
      
-      noncolo.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, 1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-gamAB), 1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-gamA))
+      noncolo.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * (1-gamAB), (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * (1-gamA))
         
-      colo.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <-   ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamAB, 1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * gamA)
+      colo.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <-   ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamAB, (1-z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamA)
         
       ext.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * epsAB, z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * epsA)
         
       nonext.exp_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-epsAB), z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-epsA))
     
-      noncolo.exp_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, 1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-gamBA), 1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * (1-gamB))
+      noncolo.exp_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * (1-gamBA), (1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * (1-gamB))
         
-      colo.exp_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamBA, 1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * gamB)
+      colo.exp_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, (1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamBA, (1-z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]) * gamB)
         
       ext.exp_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] <- ifelse(z_A[(block_id3[i]-1)*6+site_id3[i],time_id3[i]]==1, z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * epsBA, z_B[(block_id3[i]-1)*6+site_id3[i],time_id3[i]] * epsB)
         
